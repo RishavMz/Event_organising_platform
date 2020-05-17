@@ -1,2 +1,6 @@
 # Hackovid
-This repo has been made for keeping track of version control for our web application.
+This repo has been made for keeping tracks of changes and version control for our web based application.
+
+        TEAM:
+        => Tushar Jain
+        => Rishav Mazumdar
