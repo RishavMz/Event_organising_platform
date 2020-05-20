@@ -110,8 +110,9 @@ else
 		<!-- Nav -->
 			<nav id="menu">
 				<ul class="links">
+				<li><a href="admin_home_page.php">Home Page</a></li>
 					<li><a href="logout.php">Logout</a></li>
-					<li><a href="user_homepage.php">Home Page</a></li>
+					<li><a href="delete.php">Deleted and Mark for Reviewed posts</a></li>
 				
 				</ul>
 			</nav>
@@ -240,10 +241,21 @@ while($r=mysqli_fetch_assoc($resul))
   $description=$r['DESCRIPTION'];
   $id=$r['EVENT_ID'];
   $path="images/".$id.".jpeg";
-  echo '<div>
+ echo ('<div>
 							<div class="box">
-								<div class="image fit">
-								<img src="'.$path.'" />
+								<div class="image fit">');
+								
+						    require_once "pdo.php";
+						    $loc = NULL;
+						$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
+					$stmt123 = $pdo -> prepare($sql123);
+					$stmt123 -> execute(array(':Data123' => $id));
+					$row123 = $stmt123->fetchAll(PDO::FETCH_ASSOC);
+					foreach($row123 as $re)
+					{$loc = $re['IMAGES'];
+					break;}
+						   echo '
+								<img src="'.$loc.'"  style=" max-width:100%; max-height:350px;" />
 								</div>
 								<div class="content">
 									<header class="align-center">
