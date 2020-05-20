@@ -15,6 +15,18 @@ if(isset($_GET['DATA']))
     $sql = "DELETE FROM ORGANISER_DATA WHERE EVENT_ORGANISED_ID = :SEID";
     $stmt = $pdo -> prepare($sql);
     $stmt -> execute(array(':SEID' => $_SESSION['temp1']));
+    $sql = "DELETE FROM USER_DATA WHERE EVENT_PARTICIPATING_ID = :SEID";
+    $stmt = $pdo -> prepare($sql);
+    $stmt -> execute(array(':SEID' => $_SESSION['temp1']));
+    $sql = "DELETE FROM COMMENTS_ANSWERS WHERE EVENT_ID = :SEID";
+    $stmt = $pdo -> prepare($sql);
+    $stmt -> execute(array(':SEID' => $_SESSION['temp1']));
+    $sql = "DELETE FROM COMMENTS_QUERIES WHERE EVENT_ID = :SEID";
+    $stmt = $pdo -> prepare($sql);
+    $stmt -> execute(array(':SEID' => $_SESSION['temp1']));
+    $sql = "DELETE FROM IMAGES WHERE EVENT_ID = :SEID";
+    $stmt = $pdo -> prepare($sql);
+    $stmt -> execute(array(':SEID' => $_SESSION['temp1']));
     $sql = "DELETE FROM EVENTS WHERE EVENT_ID = :SEID";
     $stmt = $pdo -> prepare($sql);
     $stmt -> execute(array(':SEID' => $_SESSION['temp1']));
