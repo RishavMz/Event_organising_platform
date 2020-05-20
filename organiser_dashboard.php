@@ -287,7 +287,7 @@ $sql1 = "SELECT * FROM EVENTS WHERE END_DATE_TIME <= cast((NOW()) AS date);";
 					<p></p>
 					<div style="word-wrap:break-word;">
 					<?php
-					$loc = NULL;
+					$loc = 'images/img_default.jpg';
 						$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
 					$stmt123 = $pdo -> prepare($sql123);
 					$stmt123 -> execute(array(':Data123' => $Data));
@@ -363,7 +363,7 @@ $sql1 = "SELECT * FROM EVENTS WHERE END_DATE_TIME <= cast((NOW()) AS date);";
 						<textarea name="DESCRIPTION" id="message" placeholder="Enter a breif description of your competition." rows="6" cols="20"></textarea>
 					</div><br>
 										
-
+                        <p>Note- upload poster for your event in edit section after submitting this form.</p>
 					<br>
 					<input type = "submit" value="add" name="Add" class = "button special ">              
 					<button type = "button" value="Clear" name="Clear" class = "button special " onclick="location.href='organiser_dashboard.php';">Clear</button>
