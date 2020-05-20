@@ -1,13 +1,24 @@
 <?php include('server.php') ?>
 <?php
-$err=0;
 if(isset($_GET['EVENT_ID']))
 { $id=$_GET['EVENT_ID'];
-  if(isset($_GET['ERRORS']))
- $err=$_GET['ERRORS'];
+   if(isset($_GET['REVIEW']))
+ $review=$_GET['REVIEW'];
     
 }
+$review=0;
+$status='';
+$show=0;
+$sql= "UPDATE EVENTS
+SET REVIEW = '$review'
+WHERE EVENT_ID = '$id';";
 
+if(mysqli_query($db, $sql))
+  	{ 
+  $review=$review;
+  	}
+  	else
+  	   echo("Error description: " . mysqli_error($db));
 $sql = "select * from EVENTS 
 where EVENT_ID='$id'
 ;";
@@ -23,20 +34,31 @@ if($result)
   $path="images/".$id.".jpeg";
   $organiser_id=$r['ORGANISER_ID'];
   $form=$r['REGISTRATION_FORM'];
+   $status=$r['STATUS'];
+  $review=$r['REVIEW'];
+  /*if($review==1)
+  $status='Marked for review by ADMIN';
+  elseif($review==2)
+  $status='DELETED by ADMIN';
+  else
+  $status='posted';*/
 }
 else
   	   echo("Error description: " . mysqli_error($db));
-$sql = "select INSTITUTE,NAME from ORGANISER 
+$sql = "select INSTITUTE,NAME,USERNAME from ORGANISER 
 where ORGANISER_ID='$organiser_id'
 ;";
 $resul = mysqli_query($db,$sql);
 if($resul)
 {$rr=mysqli_fetch_assoc($resul);
+ $username=$rr['USERNAME'];
   $institute_name=$rr['INSTITUTE'];
   $organiser_name=$rr['NAME'];
 }
 else
   	   echo("Error description: " . mysqli_error($db));
+if($username==$_SESSION['username'])
+$show=1;
 ?>
 <!DOCTYPE HTML>
 
@@ -58,9 +80,11 @@ else
 		<!-- Nav -->
 			<nav id="menu">
 				<ul class="links">
-					<li><a href="index.php">Home</a></li>
-					<li><a href="login.php">Sign in</a></li>
-					<li><a href="register.php">Sign up</a></li>
+					<li><a href="logout.php">Logout</a></li>
+						<li><a href="organiser_homepage.php">Home Page</a></li>
+						<li><a href="organiser_dashboard.php">Dashboard</a></li>
+							<li><a href="organiser_account.php">My Account</a></li>
+								<li><a href="organiser_delete.php">By ADMIN</a></li>
 				</ul>
 			</nav>
 
@@ -75,7 +99,7 @@ else
 			</section>
 
 		<!-- Two -->
-				<section id="two" class="wrapper style2">
+			<section id="two" class="wrapper style2">
 				<div class="inner">
                                                
 					<div class="box">
@@ -95,6 +119,17 @@ else
 							<header class="align-center">
 								<p><?php echo($institute_name); ?></p>
 								<h2><?php echo($organiser_name); ?> <p> Presents </p><?php echo($event_name); ?></h2>
+							<?php $ast = NULL;
+							if($review == 0){
+							    $ast = "Posted";
+							}
+							else if($review = 1){
+							    $ast = "Marked for Review by Admin";
+							}
+							else{
+							    $ast = "Deleted by Admin";
+							}?>
+							
 							
 							<h1><br><br>
 						    <b>Event Name</b>           :   <br><?php echo($event_name); ?><br><br>
@@ -102,9 +137,19 @@ else
 					        <b>End Date and Time</b> 	:	<br><?php echo($end); ?><br><br>
 						    <b>Prizes</b>			 	:	<br><?php echo($prizes); ?><br><br>
 						    <b>Description</b>			:	<br><?php echo($description); ?><br><br>
+						    <b>Admin Review</b>			:	<br><?php     echo($ast); ?><br><br>
+						    <b>STATUS</b>			:	<br><?php echo($status); ?>
 						    </h1>
 <header class="align-center">
-			<a href="login.php" class="button special" style="align:center;">REGISTER</a>					
+    <?php 
+        
+
+        if($review==1)
+           echo '	<button class="button special" onclick="document.location = \'organiser_event.php?REVIEW=0&EVENT_ID='.$id.' \'" style="align:center;">Remove Marker</button>';
+          
+         if($show==1)  
+			echo '<button class="button special" onclick="document.location = \'comment_QA.php?EVENT_ID='.$id.'\' " style="align:center;">Comments and Queries</button>' ?>
+							
 							</header>
 
 						</div>
@@ -163,7 +208,7 @@ if($count==0)
 echo '	
 						<header class="align-center">
 						<p class="special"></p>
-						<h2>You haven\'t participated in any event !! <br><br><br></h2>
+						<h2>No Comments posted yet !! <br><br><br></h2>
 					</header>
 						
 					';
@@ -184,7 +229,7 @@ echo '
 					</ul>
 				</div>
 				<div class="copyright">
-					&copy; Untitled. All rights reserved.
+					&copy; IIITRANCHI. All rights reserved.
 				</div>
 			</footer>
 

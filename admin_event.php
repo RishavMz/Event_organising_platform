@@ -1,62 +1,31 @@
-<?php include('server.php') ?>
 <?php
-$err=0;
-$register=0;
+
+include('server.php') ?>
+<?php
+$review=0;
+$status='';
 if(isset($_GET['EVENT_ID']))
 { $id=$_GET['EVENT_ID'];
-  if(isset($_GET['ERRORS']))
- $err=$_GET['ERRORS'];
- if(isset($_GET['REGISTER']))
- $register=$_GET['REGISTER'];
-    
-}
-$name=$_SESSION['username'];
- $sql = "SELECT * FROM USERS WHERE USERNAME = '$name';";
-  $result = mysqli_query($db, $sql);
-  $user = mysqli_fetch_assoc($result);
-  
-  if ($user) { // if user exists
-$user_id=$user['USER_ID'];}
-else
- echo("Error description: " . mysqli_error($db));
- 
-$user_check_query = "SELECT * FROM USER_DATA WHERE USER_ID='$user_id' AND EVENT_PARTICIPATING_ID='$id' LIMIT 1";
-$result = mysqli_query($db, $user_check_query);
-$user = mysqli_fetch_assoc($result);
-  
-  if ($user) { // if user exists
-    if ($user['USER_ID'] == $user_id) {
-      $register=2;
-    }
-
-   else
-   $register=1;
-  } 
- 
-if($register==1){
-    	$query = "INSERT INTO USER_DATA (USER_ID, EVENT_PARTICIPATING_ID) 
-  			  VALUES('$user_id', '$id')";
-  	    if(mysqli_query($db, $query))
-  	{ $register=2;
-  	  	$query = "UPDATE EVENTS
-SET REGISTRATIONS=REGISTRATIONS+1
+  if(isset($_GET['REVIEW'])){
+ $review=$_GET['REVIEW'];
+ $sql= "UPDATE EVENTS
+SET REVIEW = '$review'
 WHERE EVENT_ID = '$id';";
-  	    if(mysqli_query($db, $query))
-  	{ $register=2;
-  	    
+
+if(mysqli_query($db, $sql))
+  	{ 
+  $review=$review;
   	}
-  	else{
+  	else
   	   echo("Error description: " . mysqli_error($db));
-  	  }
-  	    
-  	}
-  	else{
-  	   echo("Error description: " . mysqli_error($db));
-  	   $register=0;}
+  }
 }
 
+  	    
+  
+$name=$_SESSION['username'];
 $sql = "select * from EVENTS 
-where EVENT_ID='$id' AND REVIEW = 0
+where EVENT_ID='$id'
 ;";
 $result = mysqli_query($db,$sql);
 if($result)
@@ -71,10 +40,17 @@ if($result)
   $organiser_id=$r['ORGANISER_ID'];
   $form=$r['REGISTRATION_FORM'];
   $status=$r['STATUS'];
+  $review=$r['REVIEW'];
 }
 else
   	   echo("Error description: " . mysqli_error($db));
 
+if($review==1)
+$status='Marked for review';
+elseif($review==2)
+$status='DELETED';
+else
+$status='Posted';
 $sql = "select INSTITUTE,NAME from ORGANISER 
 where ORGANISER_ID='$organiser_id'
 ;";
@@ -95,6 +71,7 @@ else
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="assets/css/main.css" />
+		<link rel="stylesheet" type="text/css" href="style.css">
 	</head>
 	<style>
 	    body {font-family: Arial, Helvetica, sans-serif;}
@@ -168,21 +145,32 @@ else
   background-color: #5cb85c;
   color: white;
 }
+	
+	    table{font-size:1.8vw;}
+	    @media screen and (max-width: 600px) {
+  table {
+    font-size: 1.8vh;
+  }
+}
+	
 	</style>
 	<body class="subpage">
 
 		<!-- Header -->
 			<header id="header">
-				<div class="logo"><a href="http://iiitranchi.ac.in/">by IIITR</a></div>
+				<div class="logo"><a href="admin_homepage.php">Back</a></div>
 				<a href="#menu">Menu</a>
 			</header>
 
 		<!-- Nav -->
 			<nav id="menu">
 				<ul class="links">
-					<li><a href="user_homepage.php">Home</a></li>
-					<li><a href="user_account.php">Your Account</a></li>
-					<li><a href="logout.php">Log Out</a></li>
+					<li><a href="admin_homepage.php">Home Page</a></li>
+					<li><a href="admin_dashboard.php">Dashboard</a></li>
+						<li><a href="admin_dashboard.php#user">User Details</a></li>
+					<li><a href="delete.php">Deleted/Marked</a></li>
+					<li><a href="logout.php">Logout</a></li>
+					
 				</ul>
 			</nav>
 
@@ -197,7 +185,7 @@ else
 			</section>
 
 		<!-- Two -->
-				<section id="two" class="wrapper style2">
+			<section id="two" class="wrapper style2">
 				<div class="inner">
                                                
 					<div class="box">
@@ -224,21 +212,22 @@ else
 					        <b>End Date and Time</b> 	:	<br><?php echo($end); ?><br><br>
 						    <b>Prizes</b>			 	:	<br><?php echo($prizes); ?><br><br>
 						    <b>Description</b>			:	<br><?php echo($description); ?><br><br>
+						    <b>STATUS</b>			:	<br><?php echo($status); ?>
 						    </h1>
 <header class="align-center">
     
-    <?php if($status=='PAST')
-           echo '	<button class="button special" style="align:center;" disabled> REGISTERATION CLOSED</button>';
-           elseif($status=='FUTURE')
-            echo '	<button class="button special" style="align:center;" disabled>REGISTERATION NOT OPENED YET</button>';
-          else{
-        if($register==0)
-           echo '	<button class="button special" id="myBtn" style="align:center;">REGISTER</button>';
-           elseif($register==2)
-           echo '	<button class="button special" style="align:center;" disabled>REGISTERED</button>';
-          }
+    <?php 
+        if($review==0 || $review==1)
+           echo '	<button class="button special" id="myBtn" style="align:center;">DELETE</button>';
+        elseif($review==2)
+           echo '	<button class="button special" onclick="document.location = \'admin_event.php?REVIEW=0&EVENT_ID='.$id.' \'" style="align:center;" >RESTORE</button>';
+         if($review==0)
+           echo '	<button class="button special" onclick="document.location = \'admin_event.php?REVIEW=1&EVENT_ID='.$id.' \'" style="align:center;">Mark for REVIEW</button>';
+        elseif($review==1)
+           echo '	<button class="button special" onclick="document.location = \'admin_event.php?REVIEW=0&EVENT_ID='.$id.' \'" style="align:center;">Remove Marker</button>';
+          
            ?>
-		
+			<button class="button special" onclick="document.location = 'admin_comments.php?EVENT_ID=<?php echo($id); ?>&ORGANISER_ID=<?php echo($organiser_id) ?>' " style="align:center;">Comments and Queries</button>
 			<!-- The Modal -->
 <div id="myModal" class="modal">
 
@@ -246,14 +235,14 @@ else
   <div class="modal-content">
     <div class="modal-header">
       <span class="close">&times;</span>
-      <h2>Confirm Registration ?</h2>
+      <h2>Confirm DELETION ?</h2>
     </div>
     <div class="modal-body">
-      <a href="user_event.php?REGISTER=1&EVENT_ID=<?php echo($id); ?>">YES</a>
-      <p> Note - your signup details will be used for the registration.</p>
+      <a href="admin_event.php?REVIEW=2&EVENT_ID=<?php echo($id); ?>">YES</a>
+      <p> Note - You can also mark for review this post instead of deleting.</p>
     </div>
     <div class="modal-footer">
-      <h3>You'll soon recieve a confirmation at email specified during signup.</h3>
+      <h3>You can restore this post anytime in future.</h3>
     </div>
   </div>
 
@@ -265,107 +254,35 @@ else
 					</div>
 				</div>
 			</section>
-<h2 style="text-align:center;padding:10px;"><b>Comment Section</b></h2>
-<?php
-$count=0;
-$sql = "select * from COMMENTS_QUERIES 
-where EVENT_ID='$id'
-;";
-$result = mysqli_query($db,$sql);
-if($result){
-     echo ' <div id="main" class="container">
-                          <header>
-		<ul>';
-     while($r=mysqli_fetch_assoc($result)){
-          $count+=1;
-          $query_id=$r['QUERY_ID'];
-          $query=$r['QUERY'];
-          $user_name=$r['AUTHOR'];
-          echo '<li><h2>'.$query.'</h2>
-		          <p>	<t>posted by '.$user_name.'</t></p>';
-           $sq = "select * from COMMENTS_ANSWERS 
-          where QUERY_ID='$query_id'
-           ;";
-          $resul = mysqli_query($db,$sq);
-         if($resul){
-                echo '<ul style="list-style: none;">';
-                while($rr=mysqli_fetch_assoc($resul)){
-                        $answer=$rr['ANSWER'];
-                        $organiser_name=$rr['AUTHOR'];
-                        echo '<li>
-                                                         <blockquote>
-			              <h3><small>Reply: </small>'.$answer.'</h3> 
-			             <p>By '.$organiser_name.'</p>
-		                      </blockquote>
-		                </li>' ;
-                 }
-                 echo ' </ul>' ;
-          }
-          else
-  	     echo("Error description: " . mysqli_error($db));
-         echo '</li>';
-          
-       }
-       echo '  </ul>
-                       </header>
-                       <br>
-                      </div>' ;
-}
-else
+
+ <center><h2>Student Details</h2>
+            <p>List of students who have registred for this event.</p></center>
+        <div class = 'table wrapper'>
+            <table >
+            <thead>
+                <tr>
+                <td><b>Student Name</b></td>
+                <td><b>Institute</b></td>
+                <td><b>Graduation Year</b></td>
+                <td><b>Email ID</b></td>
+            </tr>
+            </thead><?php
+        $sql = "SELECT * FROM USERS JOIN USER_DATA JOIN EVENTS WHERE USERS.USER_ID = USER_DATA.USER_ID AND USER_DATA.EVENT_PARTICIPATING_ID = EVENTS.EVENT_ID AND EVENTS.EVENT_NAME = '$event_name';";
+        $result = mysqli_query($db,$sql);
+        if($result){
+            while($r=mysqli_fetch_assoc($result)){
+                 echo('<tr>
+                <td>'.$r["NAME"].'</td>
+                <td>'.$r["INSTITUTE"].'</td>
+                <td>'.$r["GRADUATION_YEAR"].'</td>
+                <td>'.$r["EMAIL_ID"].'</td>
+            </td></tr>');
+            }
+        }
+        	else
   	   echo("Error description: " . mysqli_error($db));
-if($count==0)
- echo '	
-						<header class="align-center">
-						<p class="special"></p>
-						<h2>No Comments posted yet !! <br><br><br></h2>
-					</header>
-						
-					';
-?>
-
-
-<section id="two" class="wrapper style2">
-				<div class="inner">
-                                               
-					<div class="box">
-						<div class="content">
-<!-- Form -->
-   <h3>Post Comment</h3>
-   <?php if($err==1)
-       echo '<h4 style="color:red;">Fill all required details !!</h4>';
-       ?>
- 
-
-  <form method="post" action="server.php">
-      	<?php include('errors.php'); ?>
-         <div class="row uniform">
-	<div class="6u 12u$(xsmall)">
-	          <input type="text" name="name" id="name" value="" placeholder="Name" />
-	</div>
-	<div class="6u$ 12u$(xsmall)">
-	         <input type="email" name="email" id="email" value="" placeholder="Email" />
-	</div>
-	<div class="6u$ 12u$(small)">
-	        <input type="checkbox" id="human" name="human" checked>
-	        <label for="human">I am a human and not a robot</label>
-	        <input type="hidden" value='<?php echo($id); ?>' name="event_id"  >
-	</div>
-	<!-- Break -->
-	<div class="12u$">
-	       <textarea name="message" id="message" placeholder="Enter your message" rows="6"></textarea>
-	</div>
-	<!-- Break -->
-	<div class="12u$">
-	       <ul class="actions">
-		<li><input type="submit" name="comment" value="Send Message" /></li>
-	        </ul>
-	</div>
-       </div>
-</form>
-
-					</div>
-				</div>
-			</section>
+       
+        ?></table>
 
 
 		<!-- Footer -->

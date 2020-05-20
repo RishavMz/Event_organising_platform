@@ -11,6 +11,18 @@
   	unset($_SESSION['username']);
   	header("location: login.php");
   }
+  $name=$_SESSION['username'];
+  $sql="SELECT NAME FROM USERS WHERE USERNAME= '$name';";
+  	if(mysqli_query($db, $sql)){
+  	$results = mysqli_query($db, $sql);
+  	if (mysqli_num_rows($results) == 0) {
+  	    	session_destroy();
+  	unset($_SESSION['username']);
+  	header("location: login.php");
+  	}
+  	
+  	}else
+  	 echo("Error description: " . mysqli_error($db));
 ?>
 <?php
 //connect database 
@@ -22,7 +34,7 @@ $future=0;
 $past=0;
 $registered=0;
 $sql = "select * from EVENTS 
-where END_DATE_TIME >= cast((now()) as date) and BEGIN_DATE_TIME <= cast((now()) as date)
+where END_DATE_TIME >= cast((now()) as date) and BEGIN_DATE_TIME <= cast((now()) as date) AND REVIEW = 0
 ;";
 $result = mysqli_query($db,$sql);
 if($result)
@@ -33,7 +45,7 @@ while($r=mysqli_fetch_assoc($result))
 	else
   	   echo("Error description: " . mysqli_error($db));
 $sql = "select * from EVENTS 
-where END_DATE_TIME < cast((now()) as date)
+where END_DATE_TIME < cast((now()) as date) AND REVIEW = 0
 ;";
 $result = mysqli_query($db,$sql);
 if($result)
@@ -44,7 +56,7 @@ while($r=mysqli_fetch_assoc($result))
 	else
   	   echo("Error description: " . mysqli_error($db));
 $sql = "select * from EVENTS 
-where BEGIN_DATE_TIME >= cast((now()) as date)
+where BEGIN_DATE_TIME >= cast((now()) as date) AND REVIEW = 0
 ;";
 $result = mysqli_query($db,$sql);
 if($result)
@@ -216,21 +228,21 @@ while($r=mysqli_fetch_assoc($result))
 						<p class="special"><br><br><br>Connect with us to host your event with us. For More Details Click here.</p>
 						<h2>EVENTS LIST</h2>
 					</header>
+					<!-- One -->
+			<section id="one" class="wrapper style2">
+				<div class="inner">
+					<div class="grid-style">
 <?php
 //connect database 
 
 //$name= $_SESSION['username'];
 //select all values from empInfo table
 $sql = "select * from EVENTS 
-where END_DATE_TIME >= cast((now()) as date)
+where END_DATE_TIME >= cast((now()) as date) AND REVIEW = 0
 ;";
 $result = mysqli_query($db,$sql);
 if($result)
-{echo'	<!-- One -->
-			<section id="one" class="wrapper style2">
-				<div class="inner">
-					<div class="grid-style">
-';
+{
 
 while($r=mysqli_fetch_assoc($result))
 { 
@@ -241,10 +253,21 @@ while($r=mysqli_fetch_assoc($result))
   $description=$r['DESCRIPTION'];
   $id=$r['EVENT_ID'];
   $path="images/".$id.".jpeg";
-  echo '<div>
+   echo ('<div>
 							<div class="box">
-								<div class="image fit">
-								<img src="'.$path.'"  style=" max-width:100%; max-height:350px;" />
+								<div class="image fit">');
+								
+						    require_once "pdo.php";
+						    $loc = NULL;
+						$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
+					$stmt123 = $pdo -> prepare($sql123);
+					$stmt123 -> execute(array(':Data123' => $id));
+					$row123 = $stmt123->fetchAll(PDO::FETCH_ASSOC);
+					foreach($row123 as $re)
+					{$loc = $re['IMAGES'];
+					break;}
+						   echo '
+								<img src="'.$loc.'"  style=" max-width:100%; max-height:350px;" />
 								</div>
 								<div class="content">
 									<header class="align-center">
@@ -260,15 +283,14 @@ while($r=mysqli_fetch_assoc($result))
 						</div>
 						';
 }
-echo'
-					</div>
-				</div>
-			</section>';
+
 }
 else
   	   echo("Error description: " . mysqli_error($db));
 ?>
-
+	</div>
+				</div>
+			</section>
 <!-- PAST EVENTS-->
 
 	<header class="align-center">
@@ -281,7 +303,7 @@ else
 //$name= $_SESSION['username'];
 //select all values from empInfo table
 $sql = "select * from EVENTS 
-where END_DATE_TIME <= cast((now()) as date)
+where END_DATE_TIME <= cast((now()) as date) AND REVIEW = 0
 ;";
 $result = mysqli_query($db,$sql);
 $count=0;
