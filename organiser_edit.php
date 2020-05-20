@@ -3,7 +3,7 @@ session_start();
 
 if(!isset($_SESSION['username']))
 {
-    header("location:login.php");
+    //header("location:login.php");
 }
 if(isset($_GET['EVENT_ID']))
 {      
@@ -14,23 +14,106 @@ if(!isset($_SESSION['temp']))
     header("location:login.php");
 }
 require_once "pdo.php";
+
+			    $loc = NULL;
+						$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
+					$stmt123 = $pdo -> prepare($sql123);
+					$stmt123 -> execute(array(':Data123' => $_GET['EVENT_ID']));
+					$row123 = $stmt123->fetchAll(PDO::FETCH_ASSOC);
+					foreach($row123 as $re)
+					{$loc = $re['IMAGES'];
+					break;}
 if(isset($_POST['SDATE']) && isset($_POST['STIME']) && isset($_POST['EDATE']) && isset($_POST['ETIME']) && isset($_POST['PRIZES']) && isset($_POST['DESCRIPTION']) && isset($_POST['REGISTRATION_FORM']))
-{	$begin=$_POST['SDATE']." ".$_POST['STIME'].":00";
-	$end=$_POST['EDATE']." ".$_POST['ETIME'].":00";
+{	$begin=htmlentities($_POST['SDATE'])." ".htmlentities($_POST['STIME']).":00";
+	$end=htmlentities($_POST['EDATE'])." ".htmlentities($_POST['ETIME']).":00";
 	$sql = "UPDATE EVENTS SET  BEGIN_DATE_TIME = :V3 , END_DATE_TIME = :V4, PRIZES = :V6 , DESCRIPTION = :V7 , REGISTRATION_form = :V8 WHERE EVENT_ID = :SEID";
     $stmt = $pdo -> prepare($sql);
 	$stmt -> execute(array( 
 							':V3' => $begin,
 							':V4' => $end,
-							':V6' => $_POST['PRIZES'],
-							':V7' => $_POST['DESCRIPTION'],
-							':V8' => $_POST['REGISTRATION_FORM'],
-                            ':SEID' => $_SESSION['temp'],));
+							':V6' => htmlentities($_POST['PRIZES']),
+							':V7' => htmlentities($_POST['DESCRIPTION']),
+							':V8' => htmlentities($_POST['REGISTRATION_FORM']),
+                            ':SEID' => htmlentities($_SESSION['temp']),));
 		unset($_SESSION['temp']);
 	    unset($_SESSION['H']);
 	    $_SESSION['message'] = "Event successfully editted.";
         echo("<script>window.location.replace('organiser_dashboard.php');</script>")        ;            
                                                 }
+
+
+												if(isset($_POST['submit'])){
+                                                    
+													// Count total files
+													$countfiles = count($_FILES['files']['name']);
+													if($loc == NULL){
+												    $query1 = "INSERT INTO IMAGES(EVENT_ID , IMAGE_NAME , IMAGES)VALUES(?,?,?)";
+												    	$statement = $pdo->prepare($query1);
+												  
+													// Loop all files
+													for($i=0;$i<$countfiles;$i++){
+												  
+													  // File name
+													  $filename = $_FILES['files']['name'][$i];
+												  
+													  // Location
+													  $target_file = 'images/'.$filename;
+												  
+													  // file extension
+													  $file_extension = pathinfo($target_file, PATHINFO_EXTENSION);
+													  $file_extension = strtolower($file_extension);
+												  
+													  // Valid image extension
+													  $valid_extension = array("png","jpeg","jpg");
+												  
+													  if(in_array($file_extension, $valid_extension)){
+												  
+														 // Upload file
+														 if(move_uploaded_file($_FILES['files']['tmp_name'][$i],$target_file)){
+												  
+															// Execute query
+														$statement->execute(array($_SESSION['temp'],$filename,$target_file));}
+												  
+														 }
+													  }
+												    
+													}
+												    else{
+													// Prepared statement
+													$query = "UPDATE IMAGES SET IMAGE_NAME = ? ,IMAGES = ? WHERE EVENT_ID = ?";
+												  
+													$statement = $pdo->prepare($query);
+												  
+													// Loop all files
+													for($i=0;$i<$countfiles;$i++){
+												  
+													  // File name
+													  $filename = $_FILES['files']['name'][$i];
+												  
+													  // Location
+													  $target_file = 'images/'.$filename;
+												  
+													  // file extension
+													  $file_extension = pathinfo($target_file, PATHINFO_EXTENSION);
+													  $file_extension = strtolower($file_extension);
+												  
+													  // Valid image extension
+													  $valid_extension = array("png","jpeg","jpg");
+												  
+													  if(in_array($file_extension, $valid_extension)){
+												  
+														 // Upload file
+														 if(move_uploaded_file($_FILES['files']['tmp_name'][$i],$target_file)){
+												  
+															// Execute query
+														$statement->execute(array($filename,$target_file,$_SESSION['temp']));}
+												  
+														 }
+													  }
+												   
+													}
+													$_SESSION['message']="Image uploaded successfully";
+												  }
 
 
 ?>
@@ -72,7 +155,16 @@ if(isset($_POST['SDATE']) && isset($_POST['STIME']) && isset($_POST['EDATE']) &&
 			$etime = "";
 			$prizes = "";
 			$description = "";
-			$regisform = "";		
+			$regisform = "";
+			
+			    
+						$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
+					$stmt123 = $pdo -> prepare($sql123);
+					$stmt123 -> execute(array(':Data123' => $_GET['EVENT_ID']));
+					$row123 = $stmt123->fetchAll(PDO::FETCH_ASSOC);
+					foreach($row123 as $re)
+					{$loc = $re['IMAGES'];
+					break;}
 				$sql = "SELECT * FROM EVENTS  WHERE EVENT_ID = :Data";
 				$stmt = $pdo -> prepare($sql);
 				$stmt -> execute(array(':Data' => $_GET['EVENT_ID']));
@@ -92,12 +184,27 @@ if(isset($_POST['SDATE']) && isset($_POST['STIME']) && isset($_POST['EDATE']) &&
                     break;     
             }	
             
-            ?>
+			if(isset($_SESSION['message']))
+		{
+		    echo("<div class = 'error success'>".$_SESSION['message']."</div>");
+		    unset($_SESSION['message']);
+		}
+			
+			?>
+			
+<div class="content">
+<p>
+Insert an Image for your event:
+</p>
+<form method='post' action='' enctype='multipart/form-data'>
+  <input type='file' name='files[]' multiple />
+  <input type='submit' value='Submit' name='submit' />
+</form></div>
         <div class="content">
 				<br>Edit an event:
 					<br><br>
 					<center>
-				<?php echo("<img src='images/".$evid.".jpeg' width = 500em height = auto style='max-width:100%;' alt ='Image Unavailable'/>");?>
+				<?php echo("<img src='".$loc."' width = 500em height = auto style='max-width:100%;' alt ='Image Unavailable'/>");?>
 		</center>
 					
 					<br>
@@ -123,7 +230,7 @@ if(isset($_POST['SDATE']) && isset($_POST['STIME']) && isset($_POST['EDATE']) &&
 						<label for="description">Description</label>
 						<textarea name="DESCRIPTION" id="message" placeholder="Enter a breif description of your competition." rows="6" cols="20"><?php echo($description);?></textarea>
 					</div><br>
-										<i style="font-size:0.8em;">To change the poster for your event, send CHANGE with a new image along with event name and username on<img src = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/1200px-WhatsApp.svg.png"   style="width :20px; height:auto;"> XXXXXXXXXX .</i>
+										
 
 					<br>
 					<input type = "submit" value="EDIT" name="EDIT" class = "button special ">              

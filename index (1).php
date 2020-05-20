@@ -1,22 +1,13 @@
 <?php include('server.php') ?>
 <?php 
-  
-
-  if (!isset($_SESSION['username'])) {
-  	$_SESSION['msg'] = "You must log in first";
-  	header('location: login.php');
-  }
   if (isset($_GET['logout'])) {
   	session_destroy();
   	unset($_SESSION['username']);
-  	header("location: login.php");
+  	
   }
 ?>
 <?php
-//connect database 
 
-$name= $_SESSION['username'];
-//select all values from empInfo table
 $running=0;
 $future=0;
 $past=0;
@@ -54,37 +45,16 @@ while($r=mysqli_fetch_assoc($result))
 }
 	else
   	   echo("Error description: " . mysqli_error($db));
- $sql = "SELECT * FROM USERS WHERE USERNAME = '$name';";
-  $result = mysqli_query($db, $sql);
-  $user = mysqli_fetch_assoc($result);
-  
-  if ($user) { // if user exists
-$user_id=$user['USER_ID'];
-$fullname=$user['NAME'];
-$institute=$user['INSTITUTE'];
-$grad_year=$user['GRADUATION_YEAR'];
-$email=$user['EMAIL_ID'];
-$phone=$user['PHONE'];
-  }
-else
-  echo("Error description: " . mysqli_error($db));
-$sql = "select * from USER_DATA 
-where USER_ID = $user_id
-;";
-$result = mysqli_query($db,$sql);
-if($result)
-{
-while($r=mysqli_fetch_assoc($result))
-{ $registered=$registered+1;}
-} 
-	else
-  	   echo("Error description: " . mysqli_error($db));
+
 ?>
 <!DOCTYPE HTML>
-
+<!--
+  Site developed by Tushar Jain (2019UGCS001R) IIITR and 
+                    Rishav Mazumdar (2019UGEC013R) IIITR
+-->
 <html>
 	<head>
-		<title>Account</title>
+		<title>Home Page</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="assets/css/main.css" />
@@ -97,7 +67,7 @@ while($r=mysqli_fetch_assoc($result))
 /* Create two equal columns that floats next to each other */
 .column {
   float: left;
-  width: 25%;
+  width: 33.333333%;
   padding: 10px;
   height: 100px; /* Should be removed. Only for demonstration */
  text-align: center;
@@ -128,8 +98,8 @@ while($r=mysqli_fetch_assoc($result))
 		<!-- Nav -->
 			<nav id="menu">
 				<ul class="links">
-					<li><a href="logout.php">Logout</a></li>
-					<li><a href="user_homepage.php">Home Page</a></li>
+					<li><a href="login.php">Sign in</a></li>
+					<li><a href="register.php">Sign up</a></li>
 				
 				</ul>
 			</nav>
@@ -140,7 +110,7 @@ while($r=mysqli_fetch_assoc($result))
 					<img src="images/code.jpg" alt="" />
 					<div class="inner">
 						<header >
-						    <p style="font-size:2vw;"> All types of coding events at one place. </p>
+						    <p style="font-size:3vw;"> All types of coding events at one place. </p>
 							
 							<h1 style="font-size:8vw;"> Coding Events </h1>
 						</header>
@@ -150,7 +120,7 @@ while($r=mysqli_fetch_assoc($result))
 					<img src="images/art.jpg" alt="" />
 					<div class="inner">
 						<header>
-							<p style="font-size:2vw;">Try your skills here </p>
+							<p style="font-size:3vw;">Try your skills here </p>
 							<h3 style="font-size:8vw;">Art Events </h3>
 						</header>
 					</div>
@@ -159,7 +129,7 @@ while($r=mysqli_fetch_assoc($result))
 					<img src="images/sports.jpg"  alt="" />
 					<div class="inner">
 						<header>
-							<p style="font-size:2vw;">Get details of all sporting events around you!!</p>
+							<p style="font-size:3vw;">Get details of all sporting events around you!!</p>
 							<h3 style="font-size:8vw;">Sports Events</h3>
 						</header>
 					</div>
@@ -187,29 +157,13 @@ while($r=mysqli_fetch_assoc($result))
 			</section>
 			<br>
 			<br>
-				<section id="One" class="wrapper style3">			
-			<div class="inner">
-				<header class="align-center">
-					<p>Username: <?php echo($name) ;?></p>
-					<h2><?php echo($fullname) ;?></h2>
-					<p>Institute/SChool : <?php echo($institute) ;?><br></p>
-					<p>Graduation Year : <?php echo($grad_year) ;?><br></p>
-					<p>Contact Details : <?php echo($email) ;?><br><?php echo($phone) ;?></p>
-				</header>
-			</div>
-		</section>
 			<!-- Two -->
 			<section id="two" class="wrapper style3">
 				<div class="inner">
 					<header class="align-center">
-						<p>Try to be more active in college events</p>
-						<h2>DASHBOARD</h2>
+						<p>Participate in events of your interests to test your skills.</p>
+						<h2>Events Details</h2>
 					</header>
-					
-					
-					
-					
-					
                                                                         <div class="row">
   <div class="column" style="background-color:#aaa;">
     <h2>Running Events</h2>
@@ -226,44 +180,78 @@ while($r=mysqli_fetch_assoc($result))
     <h2>Past Events</h2>
     <h2> <?php echo $past ;?></h2>
   </div>
-  <div class="column" style="background-color:#bbb;">
-    <h2>You Registered in</h2>
-    <h2> <?php echo $registered ;?> </h2>
-  </div>
+  
 </div>
+				</div>
+			</section>
+			
+			
+			<!-- One -->
+			<section id="one" class="wrapper style2">
+				<div class="inner">
+					<div class="grid-style">
+					    <div>
+							<div class="box">
+								<div class="image fit">
+								</div>
+								<div class="content">
+									<header class="align-center">
+										<p></p>
+										<h2>USER</h2>
+										<p>Sign in as USER.</p>
+									</header>
+									<br>
+									<footer class="align-center">
+										<a href="user_homepage.php"class="button alt">Click Here</a>
+									</footer>
+								</div>
+							</div>
+						</div>
+						 <div>
+							<div class="box">
+								<div class="image fit">
+								</div>
+								<div class="content">
+									<header class="align-center">
+										<p></p>
+										<h2>ORGANISER</h2>
+										<p>Sign in as ORGANISER.</p>
+									</header>
+									<br>
+									<footer class="align-center">
+										<a href="organiser_homepage.php"class="button alt">Click Here</a>
+									</footer>
+								</div>
+							</div>
+						</div>
+							</div>
 				</div>
 			</section>
 
 				<header class="align-center">
-						<p class="special"><br><br><br>Connect with us to host your event with us. For More Details Click here.</p>
-						<h2>REGISTERED EVENTS</h2>
+						<p class="special"><br><br><br>Connect with us to host your event with us.</p>
+						<h2>EVENTS LIST</h2>
 					</header>
+					
+	
 <?php
 //connect database 
-$count=0;
+
 //$name= $_SESSION['username'];
 //select all values from empInfo table
-$sql = "select * from USER_DATA 
-where USER_ID='$user_id'
+$sql = "select * from EVENTS 
+where END_DATE_TIME >= cast((now()) as date) AND REVIEW = 0
 ;";
 $result = mysqli_query($db,$sql);
 if($result)
-{echo'<!-- One -->
-			<section id="One" class="wrapper style2">
+{echo'	<!-- One -->
+			<section id="one" class="wrapper style2">
 				<div class="inner">
 					<div class="grid-style">
-';
-while($rr=mysqli_fetch_assoc($result))
-{ $ID=$rr['EVENT_PARTICIPATING_ID'];
-$sql = "select * from EVENTS 
-where EVENT_ID = '$ID'
-;";
-$resul = mysqli_query($db,$sql);
-if($resul)
-{
+';  
 
-while($r=mysqli_fetch_assoc($resul))
-{ $count+=1;
+while($r=mysqli_fetch_assoc($result))
+{ 
   $event_name=$r['EVENT_NAME'];
   $begin=$r['BEGIN_DATE_TIME'];
   $end=$r['END_DATE_TIME'];
@@ -271,10 +259,11 @@ while($r=mysqli_fetch_assoc($resul))
   $description=$r['DESCRIPTION'];
   $id=$r['EVENT_ID'];
   $path="images/".$id.".jpeg";
- echo '<div>
-								<div class="box">
-								<div class="image fit">';
-								require_once "pdo.php";
+  echo ('<div>
+							<div class="box">
+								<div class="image fit">');
+								
+						    require_once "pdo.php";
 						    $loc = NULL;
 						$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
 					$stmt123 = $pdo -> prepare($sql123);
@@ -283,8 +272,9 @@ while($r=mysqli_fetch_assoc($resul))
 					foreach($row123 as $re)
 					{$loc = $re['IMAGES'];
 					break;}
-							echo '	<img src="'.$loc.'"  style=" max-width:100%; max-height:350px;" />
-                                </div>
+						   echo '
+								<img src="'.$loc.'"  style=" max-width:100%; max-height:350px;" />
+								</div>
 								<div class="content">
 									<header class="align-center">
 										<p>IIIT Ranchi</p>
@@ -292,18 +282,12 @@ while($r=mysqli_fetch_assoc($resul))
 									</header>
 									<p>Start Date:'.$begin.'<br>End Date:'.$end.'<br>Prizes:'.$prizes.'</p>
 									<footer class="align-center">
-										<a href="user_event.php?EVENT_ID='.$id.'"class="button alt">Learn More</a>
+										<a href="guest_event.php?EVENT_ID='.$id.'"class="button alt">Learn More</a>
 									</footer>
 								</div>
 							</div>
 						</div>
 						';
-}
-
-
-}
-else
-  	   echo("Error description: " . mysqli_error($db));
 }
 echo'
 					</div>
@@ -312,16 +296,130 @@ echo'
 }
 else
   	   echo("Error description: " . mysqli_error($db));
- 
+?>
+
+<!-- PAST EVENTS-->
+
+	<header class="align-center">
+						<p class="special"><br><br><br>Connect with us to host your event with us.</p>
+						<h2>PAST EVENTS</h2>
+					</header>
+<?php
+//connect database 
+
+//$name= $_SESSION['username'];
+//select all values from empInfo table
+$sql = "select * from EVENTS 
+where END_DATE_TIME <= cast((now()) as date) AND REVIEW = 0
+;";
+$result = mysqli_query($db,$sql);
+$count=0;
+if($result)
+{echo'	<!-- One -->
+			<section id="one" class="wrapper style2">
+				<div class="inner">
+					<div class="grid-style">
+';
+
+while($r=mysqli_fetch_assoc($result))
+{ $count+=1;
+  $event_name=$r['EVENT_NAME'];
+  $begin=$r['BEGIN_DATE_TIME'];
+  $end=$r['END_DATE_TIME'];
+  $prizes=$r['PRIZES'];
+  $description=$r['DESCRIPTION'];
+  $id=$r['EVENT_ID'];
+  $path="images/".$id.".jpeg";
+  echo ('<div>
+							<div class="box">
+								<div class="image fit">');
+								
+						    require_once "pdo.php";
+						    $loc = NULL;
+						$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
+					$stmt123 = $pdo -> prepare($sql123);
+					$stmt123 -> execute(array(':Data123' => $id));
+					$row123 = $stmt123->fetchAll(PDO::FETCH_ASSOC);
+					foreach($row123 as $re)
+					{$loc = $re['IMAGES'];
+					break;}
+						   echo '
+								<img src="'.$loc.'"  style=" max-width:100%; max-height:350px;" />
+								</div>
+								<div class="content">
+									<header class="align-center">
+										<p>IIIT Ranchi</p>
+										<h2>'.$event_name.'</h2>
+									</header>
+									<p>Start Date:'.$begin.'<br>End Date:'.$end.'<br>Prizes:'.$prizes.'</p>
+									<footer class="align-center">
+										<a href="guest_event.php?EVENT_ID='.$id.'"class="button alt">Learn More</a>
+									</footer>
+								</div>
+							</div>
+						</div>
+						';
+}
+echo'
+					</div>
+				</div>
+			</section>';
 if ($count==0)
 echo '	
 						<header class="align-center">
 						<p class="special"></p>
-						<h2>You haven\'t participated in any event !! <br><br><br></h2>
+						<h2>No past events details available!<br><br><br></h2>
 					</header>
 						
 					';
+}
+else
+  	   echo("Error description: " . mysqli_error($db));
 ?>
+
+		
+		
+		<!-- Three -->
+			<section id="three" class="wrapper style2">
+				<div class="inner">
+					<header class="align-center">
+						<p class="special">Connect with us to host your event with us.</p>
+						<h2>OUR PARTNERS</h2>
+					</header>
+					<div class="gallery">
+						<div>
+							<div class="image fit">
+								<a href="https://www.facebook.com/CuLAriti/"><img src="images/partner1.jpg" alt="" /></a>
+							</div>
+						</div>
+						<div>
+							<div class="image fit">
+								<a href="https://www.facebook.com/unmukt.iiitr/"><img src="images/partner2.jpg" alt="" /></a>
+							</div>
+						</div>
+						<div>
+							<div class="image fit">
+								<a href="https://www.facebook.com/hG.iiitranchi/"><img src="images/partner3.jpeg" alt="" /></a>
+							</div>
+						</div>
+						<div>
+							<div class="image fit">
+								<a href="https://www.facebook.com/VYANGIIITR/"><img src="images/partner4.png" alt="" /></a>
+							</div>
+						</div>
+						<div>
+							<div class="image fit">
+								<a href="http://iiitranchi.ac.in/"><img src="images/partner5.jpeg" alt="" /></a>
+							</div>
+						</div>
+						<div>
+							<div class="image fit">
+								<a href="https://www.instagram.com/sportscouncil.iiitr/"><img src="images/partner6.jpeg" alt="" /></a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
 
 
 		<!-- Footer -->
@@ -335,8 +433,14 @@ echo '
 					</ul>
 				</div>
 				<div class="copyright">
-					&copy; IIITRANCHI. All rights reserved.
+					&copy; IIITRANCHI. All rights reserved.<br>
+					
 				</div>
+				<!-- hitwebcounter Code START -->
+				 <div class="text-center" >
+                   <b> Unique Visitor Counter: </b> <br>  
+                <img src="https://hitwebcounter.com/counter/counter.php?page=7348838&style=0010&nbdigits=5&type=page&initCount=0" title="Web Counter" Alt="counter free"   border="0" >
+                 </div>
 			</footer>
 
 		<!-- Scripts -->

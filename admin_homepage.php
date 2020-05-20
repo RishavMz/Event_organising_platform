@@ -22,7 +22,7 @@ $future=0;
 $past=0;
 $registered=0;
 $sql = "select * from EVENTS 
-where END_DATE_TIME >= cast((now()) as date) and BEGIN_DATE_TIME <= cast((now()) as date)
+where END_DATE_TIME >= cast((now()) as date) and BEGIN_DATE_TIME <= cast((now()) as date) AND REVIEW=0
 ;";
 $result = mysqli_query($db,$sql);
 if($result)
@@ -33,7 +33,7 @@ while($r=mysqli_fetch_assoc($result))
 	else
   	   echo("Error description: " . mysqli_error($db));
 $sql = "select * from EVENTS 
-where END_DATE_TIME < cast((now()) as date)
+where END_DATE_TIME < cast((now()) as date) AND REVIEW=0
 ;";
 $result = mysqli_query($db,$sql);
 if($result)
@@ -44,7 +44,7 @@ while($r=mysqli_fetch_assoc($result))
 	else
   	   echo("Error description: " . mysqli_error($db));
 $sql = "select * from EVENTS 
-where BEGIN_DATE_TIME >= cast((now()) as date)
+where BEGIN_DATE_TIME >= cast((now()) as date) AND REVIEW=0
 ;";
 $result = mysqli_query($db,$sql);
 if($result)
@@ -104,7 +104,13 @@ while($r=mysqli_fetch_assoc($result))
 		<!-- Nav -->
 			<nav id="menu">
 				<ul class="links">
+					
+				 <li><a href="admin_homepage.php">Home Page</a></li>
+				 <li><a href="admin_dashboard.php">Dashboard</a></li>
+				 	<li><a href="admin_dashboard.php#user">User Details</a></li>
 					<li><a href="logout.php">Logout</a></li>
+					<li><a href="delete.php">Deleted/Marked</a></li>
+					
 					
 				
 				</ul>
@@ -201,7 +207,7 @@ while($r=mysqli_fetch_assoc($result))
 //$name= $_SESSION['username'];
 //select all values from empInfo table
 $sql = "select * from EVENTS 
-where END_DATE_TIME >= cast((now()) as date)
+where END_DATE_TIME >= cast((now()) as date) AND REVIEW=0
 ;";
 $result = mysqli_query($db,$sql);
 if($result)
@@ -220,10 +226,21 @@ while($r=mysqli_fetch_assoc($result))
   $description=$r['DESCRIPTION'];
   $id=$r['EVENT_ID'];
   $path="images/".$id.".jpeg";
-  echo '<div>
+  echo ('<div>
 							<div class="box">
-								<div class="image fit">
-								<img src="'.$path.'"  style=" max-width:100%; max-height:350px;" />
+								<div class="image fit">');
+								
+						    require_once "pdo.php";
+						    $loc = NULL;
+						$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
+					$stmt123 = $pdo -> prepare($sql123);
+					$stmt123 -> execute(array(':Data123' => $id));
+					$row123 = $stmt123->fetchAll(PDO::FETCH_ASSOC);
+					foreach($row123 as $re)
+					{$loc = $re['IMAGES'];
+					break;}
+						   echo '
+								<img src="'.$loc.'"  style=" max-width:100%; max-height:350px;" />
 								</div>
 								<div class="content">
 									<header class="align-center">
@@ -232,7 +249,7 @@ while($r=mysqli_fetch_assoc($result))
 									</header>
 									<p>Start Date:'.$begin.'<br>End Date:'.$end.'<br>Prizes:'.$prizes.'</p>
 									<footer class="align-center">
-										<a href="user_event.php?EVENT_ID='.$id.'"class="button alt">Learn More</a>
+										<a href="admin_event.php?EVENT_ID='.$id.'"class="button alt">Learn More</a>
 									</footer>
 								</div>
 							</div>
@@ -260,7 +277,7 @@ else
 //$name= $_SESSION['username'];
 //select all values from empInfo table
 $sql = "select * from EVENTS 
-where END_DATE_TIME <= cast((now()) as date)
+where END_DATE_TIME <= cast((now()) as date) AND REVIEW=0
 ;";
 $result = mysqli_query($db,$sql);
 $count=0;
@@ -280,10 +297,21 @@ while($r=mysqli_fetch_assoc($result))
   $description=$r['DESCRIPTION'];
   $id=$r['EVENT_ID'];
   $path="images/".$id.".jpeg";
-  echo '<div>
+  echo ('<div>
 							<div class="box">
-								<div class="image fit">
-								<img src="'.$path.'"  style=" max-width:100%; max-height:350px;" />
+								<div class="image fit">');
+									
+						    require_once "pdo.php";
+						    $loc = NULL;
+						$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
+					$stmt123 = $pdo -> prepare($sql123);
+					$stmt123 -> execute(array(':Data123' => $id));
+					$row123 = $stmt123->fetchAll(PDO::FETCH_ASSOC);
+					foreach($row123 as $re)
+					{$loc = $re['IMAGES'];
+					break;}
+						    echo '
+								<img src="'.$loc.'"  style=" max-width:100%; max-height:350px;" />
 								</div>
 								<div class="content">
 									<header class="align-center">
@@ -292,7 +320,7 @@ while($r=mysqli_fetch_assoc($result))
 									</header>
 									<p>Start Date:'.$begin.'<br>End Date:'.$end.'<br>Prizes:'.$prizes.'</p>
 									<footer class="align-center">
-										<a href="user_event.php?EVENT_ID='.$id.'"class="button alt">Learn More</a>
+										<a href="admin_event.php?EVENT_ID='.$id.'"class="button alt">Learn More</a>
 									</footer>
 								</div>
 							</div>

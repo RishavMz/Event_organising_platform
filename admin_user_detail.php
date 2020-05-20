@@ -1,21 +1,20 @@
 <?php include('server.php') ?>
 <?php 
-  
-
- 
   if (isset($_GET['USER_ID'])) {
   	$user_id=$_GET['USER_ID'];
   }
 ?>
 <?php
 //connect database 
+
+
 //select all values from empInfo table
 $running=0;
 $future=0;
 $past=0;
 $registered=0;
 $sql = "select * from EVENTS 
-where END_DATE_TIME >= cast((now()) as date) and BEGIN_DATE_TIME <= cast((now()) as date)
+where END_DATE_TIME >= cast((now()) as date) and BEGIN_DATE_TIME <= cast((now()) as date) AND REVIEW = 0
 ;";
 $result = mysqli_query($db,$sql);
 if($result)
@@ -26,7 +25,7 @@ while($r=mysqli_fetch_assoc($result))
 	else
   	   echo("Error description: " . mysqli_error($db));
 $sql = "select * from EVENTS 
-where END_DATE_TIME < cast((now()) as date)
+where END_DATE_TIME < cast((now()) as date) AND REVIEW = 0
 ;";
 $result = mysqli_query($db,$sql);
 if($result)
@@ -37,7 +36,7 @@ while($r=mysqli_fetch_assoc($result))
 	else
   	   echo("Error description: " . mysqli_error($db));
 $sql = "select * from EVENTS 
-where BEGIN_DATE_TIME >= cast((now()) as date)
+where BEGIN_DATE_TIME >= cast((now()) as date) AND REVIEW = 0
 ;";
 $result = mysqli_query($db,$sql);
 if($result)
@@ -52,7 +51,7 @@ while($r=mysqli_fetch_assoc($result))
   $user = mysqli_fetch_assoc($result);
   
   if ($user) { // if user exists
-$name=$user['USERNAME'];
+$user_id=$user['USER_ID'];
 $fullname=$user['NAME'];
 $institute=$user['INSTITUTE'];
 $grad_year=$user['GRADUATION_YEAR'];
@@ -122,7 +121,7 @@ while($r=mysqli_fetch_assoc($result))
 			<nav id="menu">
 				<ul class="links">
 					<li><a href="logout.php">Logout</a></li>
-					<li><a href="user_homepage.php">Home Page</a></li>
+					<li><a href="admin_homepage.php">Home Page</a></li>
 				
 				</ul>
 			</nav>
@@ -180,8 +179,10 @@ while($r=mysqli_fetch_assoc($result))
 			</section>
 			<br>
 			<br>
+			<!-- One -->
 				<section id="One" class="wrapper style3">			
 			<div class="inner">
+					
 				<header class="align-center">
 					<p>Username: <?php echo($name) ;?></p>
 					<h2><?php echo($fullname) ;?></h2>
@@ -189,6 +190,7 @@ while($r=mysqli_fetch_assoc($result))
 					<p>Graduation Year : <?php echo($grad_year) ;?><br></p>
 					<p>Contact Details : <?php echo($email) ;?><br><?php echo($phone) ;?></p>
 				</header>
+				
 			</div>
 		</section>
 			<!-- Two -->
@@ -220,7 +222,7 @@ while($r=mysqli_fetch_assoc($result))
     <h2> <?php echo $past ;?></h2>
   </div>
   <div class="column" style="background-color:#bbb;">
-    <h2>Registered in</h2>
+    <h2>You Registered in</h2>
     <h2> <?php echo $registered ;?> </h2>
   </div>
 </div>
@@ -241,7 +243,11 @@ where USER_ID='$user_id'
 ;";
 $result = mysqli_query($db,$sql);
 if($result)
-{
+{echo'	<!-- One -->
+			<section id="One" class="wrapper style2">
+				<div class="inner">
+					<div class="grid-style">
+';
 while($rr=mysqli_fetch_assoc($result))
 { $ID=$rr['EVENT_PARTICIPATING_ID'];
 $sql = "select * from EVENTS 
@@ -249,11 +255,7 @@ where EVENT_ID = '$ID'
 ;";
 $resul = mysqli_query($db,$sql);
 if($resul)
-{echo'	<!-- One -->
-			<section id="one" class="wrapper style2">
-				<div class="inner">
-					<div class="grid-style">
-';
+{
 
 while($r=mysqli_fetch_assoc($resul))
 { $count+=1;
@@ -264,10 +266,21 @@ while($r=mysqli_fetch_assoc($resul))
   $description=$r['DESCRIPTION'];
   $id=$r['EVENT_ID'];
   $path="images/".$id.".jpeg";
-  echo '<div>
+   echo ('<div>
 							<div class="box">
-								<div class="image fit">
-								<img src="'.$path.'" />
+								<div class="image fit">');
+								
+						    require_once "pdo.php";
+						    $loc = NULL;
+						$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
+					$stmt123 = $pdo -> prepare($sql123);
+					$stmt123 -> execute(array(':Data123' => $id));
+					$row123 = $stmt123->fetchAll(PDO::FETCH_ASSOC);
+					foreach($row123 as $re)
+					{$loc = $re['IMAGES'];
+					break;}
+						   echo '
+								<img src="'.$loc.'"  style=" max-width:100%; max-height:350px;" />
 								</div>
 								<div class="content">
 									<header class="align-center">
@@ -276,7 +289,7 @@ while($r=mysqli_fetch_assoc($resul))
 									</header>
 									<p>Start Date:'.$begin.'<br>End Date:'.$end.'<br>Prizes:'.$prizes.'</p>
 									<footer class="align-center">
-											<a href="user_event.php?EVENT_ID='.$id.'"class="button alt">Learn More</a>
+											<a href="admin_event.php?EVENT_ID='.$id.'"class="button alt">Learn More</a>
 									</footer>
 								</div>
 							</div>
@@ -284,14 +297,15 @@ while($r=mysqli_fetch_assoc($resul))
 						';
 }
 
-echo'
-					</div>
-				</div>
-			</section>';
+
 }
 else
   	   echo("Error description: " . mysqli_error($db));
 }
+echo'
+					</div>
+				</div>
+			</section>';
 }
 else
   	   echo("Error description: " . mysqli_error($db));
@@ -300,7 +314,7 @@ if ($count==0)
 echo '	
 						<header class="align-center">
 						<p class="special"></p>
-						<h2>You haven\'t participated in any event !! <br><br><br></h2>
+						<h2>haven\'t participated in any event !! <br><br><br></h2>
 					</header>
 						
 					';
