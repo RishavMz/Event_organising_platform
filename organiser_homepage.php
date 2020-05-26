@@ -1,4 +1,9 @@
-<?php include('server.php') ?>
+<?php
+/*  organiser Home page containg details of all the events posted by different organisers.
+    Note- events marked for review or deleted  will be hidden to users.
+*/ 
+include('server.php');
+?>
 <?php 
   
 
@@ -25,10 +30,9 @@
   	 echo("Error description: " . mysqli_error($db));
 ?>
 <?php
-//connect database 
 
 $name= $_SESSION['username'];
-//select all values from empInfo table
+
 $running=0;
 $future=0;
 $past=0;
@@ -155,16 +159,9 @@ while($r=mysqli_fetch_assoc($result))
 						</header>
 					</div>
 				</article>
-				<!--<article>
-					<img src="images/slide04.jpg"  alt="" />
-                    <div class="inner">
-						<header>
-							<p>Get details of all sporting events around you!!</p>
-							<h2>Sports Events</h2>
-						</header>
-					</div> -->
+				
 
-				</article>-->
+				
 				<article>
 					<img src="images/slide05.jpg"  alt="" />
 					<div class="inner">
@@ -207,14 +204,12 @@ while($r=mysqli_fetch_assoc($result))
 			</section>
 
 				<header class="align-center">
-						<p class="special"><br><br><br>Connect with us to host your event with us. For More Details Click here.</p>
+						<p class="special"><br><br><br>Connect with us to host your event with us.  For query mail us  at tusharjain.btech.cs19@iiitranchi.ac.in .</p>
 						<h2>EVENTS LIST</h2>
 					</header>
 <?php
-//connect database 
 
-//$name= $_SESSION['username'];
-//select all values from empInfo table
+//select all values of running/future events from events table
 $sql = "select * from EVENTS 
 where END_DATE_TIME >= cast((now()) as date)
 ;";
@@ -240,7 +235,7 @@ while($r=mysqli_fetch_assoc($result))
 								<div class="image fit">');
 								
 						    require_once "pdo.php";
-						    $loc = NULL;
+						    $loc = 'images/def.jpg';
 						$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
 					$stmt123 = $pdo -> prepare($sql123);
 					$stmt123 -> execute(array(':Data123' => $id));
@@ -277,14 +272,12 @@ else
 <!-- PAST EVENTS-->
 
 	<header class="align-center">
-						<p class="special"><br><br><br>Connect with us to host your event with us. For More Details Click here.</p>
+						<p class="special"><br><br><br>Connect with us to host your event with us. For query mail us  at tusharjain.btech.cs19@iiitranchi.ac.in . </p>
 						<h2>PAST EVENTS</h2>
 					</header>
 <?php
-//connect database 
 
-//$name= $_SESSION['username'];
-//select all values from empInfo table
+//select all values of past events from events table
 $sql = "select * from EVENTS 
 where END_DATE_TIME <= cast((now()) as date)
 ;";
@@ -311,7 +304,7 @@ while($r=mysqli_fetch_assoc($result))
 								<div class="image fit">');
 								
 						    require_once "pdo.php";
-						    $loc = NULL;
+						    $loc = 'images/def.jpg';
 						$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
 					$stmt123 = $pdo -> prepare($sql123);
 					$stmt123 -> execute(array(':Data123' => $id));
@@ -422,3 +415,7 @@ else
 
 	</body>
 </html>
+<!--
+                                             Authors
+        Rishav Mazumdar ( 2019UGEC013R )                Tushar Jain ( 2019UGCS001R )
+--> 

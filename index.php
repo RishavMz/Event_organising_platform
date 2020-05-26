@@ -1,47 +1,65 @@
-<?php include('server.php') ?>
-<?php 
+<?php
+/*  guest Home page containg details of all the events posted by different organisers.
+    Note- events marked for review or deleted  will be hidden to users.
+*/  
+include('server.php');
+
   if (isset($_GET['logout'])) {
   	session_destroy();
   	unset($_SESSION['username']);
   	
   }
-?>
-<?php
+
 
 $running=0;
 $future=0;
 $past=0;
 $registered=0;
+
+//to findout number of running events
+   //only count those events which aren't marked/deleted.
 $sql = "select * from EVENTS 
-where END_DATE_TIME >= cast((now()) as date) and BEGIN_DATE_TIME <= cast((now()) as date) AND REVIEW = 0
-;";
+where END_DATE_TIME >= cast((now()) as date) and BEGIN_DATE_TIME <= cast((now()) as date) AND REVIEW = 0;";
 $result = mysqli_query($db,$sql);
 if($result)
 {
-while($r=mysqli_fetch_assoc($result))
-{ $running=$running+1;}
+    while($r=mysqli_fetch_assoc($result))
+   { 
+       $running=$running+1;
+       
+   }
 }
 	else
   	   echo("Error description: " . mysqli_error($db));
+  	   
+//to findout number of past events
+//only count those events which aren't marked/deleted.  	   
 $sql = "select * from EVENTS 
-where END_DATE_TIME < cast((now()) as date) AND REVIEW = 0
-;";
+where END_DATE_TIME < cast((now()) as date) AND REVIEW = 0;";
 $result = mysqli_query($db,$sql);
 if($result)
 {
-while($r=mysqli_fetch_assoc($result))
-{ $past=$past+1;}
+     while($r=mysqli_fetch_assoc($result))
+     { 
+         $past=$past+1;
+         
+     }
 }
 	else
   	   echo("Error description: " . mysqli_error($db));
+  	   
+//to findout number of future events
+//only count those events which aren't marked/deleted.  	   
 $sql = "select * from EVENTS 
-where BEGIN_DATE_TIME >= cast((now()) as date) AND REVIEW = 0
-;";
+where BEGIN_DATE_TIME >= cast((now()) as date) AND REVIEW = 0;";
 $result = mysqli_query($db,$sql);
 if($result)
 {
-while($r=mysqli_fetch_assoc($result))
-{ $future=$future+1;}
+    while($r=mysqli_fetch_assoc($result))
+    {
+        $future=$future+1;
+        
+    }
 }
 	else
   	   echo("Error description: " . mysqli_error($db));
@@ -235,10 +253,7 @@ while($r=mysqli_fetch_assoc($result))
 					
 	
 <?php
-//connect database 
 
-//$name= $_SESSION['username'];
-//select all values from empInfo table
 $sql = "select * from EVENTS 
 where END_DATE_TIME >= cast((now()) as date) AND REVIEW = 0
 ;";
@@ -264,7 +279,7 @@ while($r=mysqli_fetch_assoc($result))
 								<div class="image fit">');
 								
 						    require_once "pdo.php";
-						    $loc = NULL;
+						    $loc = 'images/def.jpg';
 						$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
 					$stmt123 = $pdo -> prepare($sql123);
 					$stmt123 -> execute(array(':Data123' => $id));
@@ -305,10 +320,7 @@ else
 						<h2>PAST EVENTS</h2>
 					</header>
 <?php
-//connect database 
 
-//$name= $_SESSION['username'];
-//select all values from empInfo table
 $sql = "select * from EVENTS 
 where END_DATE_TIME <= cast((now()) as date) AND REVIEW = 0
 ;";
@@ -335,7 +347,7 @@ while($r=mysqli_fetch_assoc($result))
 								<div class="image fit">');
 								
 						    require_once "pdo.php";
-						    $loc = NULL;
+						    $loc = 'images/def.jpg';
 						$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
 					$stmt123 = $pdo -> prepare($sql123);
 					$stmt123 -> execute(array(':Data123' => $id));

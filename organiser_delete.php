@@ -1,6 +1,7 @@
-<?php include('server.php') ?>
-<?php 
-  
+<?php
+// this page contains details of the events marked for review or deleted by admin.
+
+include('server.php'); 
 
   if (!isset($_SESSION['username'])) {
   	$_SESSION['msg'] = "You must log in first";
@@ -11,12 +12,8 @@
   	unset($_SESSION['username']);
   	header("location: login.php");
   }
-?>
-<?php
-//connect database 
 
 $name= $_SESSION['username'];
-//select all values from empInfo table
  $sql = "SELECT * FROM ORGANISER WHERE USERNAME = '$name';";
   $result = mysqli_query($db, $sql);
   $user = mysqli_fetch_assoc($result);
@@ -68,7 +65,7 @@ while($r=mysqli_fetch_assoc($result))
 
 <html>
 	<head>
-		<title>Home Page</title>
+		<title>Deleted/Marked</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="assets/css/main.css" />
@@ -151,16 +148,7 @@ while($r=mysqli_fetch_assoc($result))
 						</header>
 					</div>
 				</article>
-				<!--<article>
-					<img src="images/slide04.jpg"  alt="" />
-                    <div class="inner">
-						<header>
-							<p>Get details of all sporting events around you!!</p>
-							<h2>Sports Events</h2>
-						</header>
-					</div> -->
-
-				</article>-->
+				
 				<article>
 					<img src="images/slide05.jpg"  alt="" />
 					<div class="inner">
@@ -203,14 +191,11 @@ while($r=mysqli_fetch_assoc($result))
 			</section>
 
 				<header class="align-center">
-						<p class="special"><br><br><br>Connect with us to host your event with us. For More Details Click here.</p>
+						<p class="special"><br><br><br>Connect with us to host your event with us.</p>
 						<h2>DELETED EVENTS LIST</h2>
 					</header>
 <?php
-//connect database 
 
-//$name= $_SESSION['username'];
-//select all values from empInfo table
 $sql = "select * from EVENTS 
 where  REVIEW=2 AND ORGANISER_ID='$organiser_id'
 ;";
@@ -236,7 +221,7 @@ while($r=mysqli_fetch_assoc($result))
 								<div class="image fit">');
 								
 						    require_once "pdo.php";
-						    $loc = NULL;
+						    $loc = 'images/def.jpg';
 						$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
 					$stmt123 = $pdo -> prepare($sql123);
 					$stmt123 -> execute(array(':Data123' => $id));
@@ -273,14 +258,11 @@ else
 <!-- PAST EVENTS-->
 
 	<header class="align-center">
-						<p class="special"><br><br><br>Connect with us to host your event with us. For More Details Click here.</p>
+						<p class="special"><br><br><br>Connect with us to host your event with us.</p>
 						<h2>MARKED FOR REVIEW</h2>
 					</header>
 <?php
-//connect database 
 
-//$name= $_SESSION['username'];
-//select all values from empInfo table
 $sql = "select * from EVENTS 
 where REVIEW = 1 AND ORGANISER_ID='$organiser_id'
 ;";
@@ -307,7 +289,7 @@ while($r=mysqli_fetch_assoc($result))
 								<div class="image fit">');
 								
 						    require_once "pdo.php";
-						    $loc = NULL;
+						    $loc = 'images/def.jpg';
 						$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
 					$stmt123 = $pdo -> prepare($sql123);
 					$stmt123 -> execute(array(':Data123' => $id));
@@ -410,3 +392,7 @@ else
 
 	</body>
 </html>
+<!--
+                                             Authors
+        Rishav Mazumdar ( 2019UGEC013R )                Tushar Jain ( 2019UGCS001R )
+--> 

@@ -1,6 +1,11 @@
-<?php include('server.php') ?>
 <?php
+/* This file contains the page for details of the event selected.
+    Guest can only view queries/comments for the event.
+*/   
+include('server.php'); 
+
 $err=0;
+
 if(isset($_GET['EVENT_ID']))
 { $id=$_GET['EVENT_ID'];
   if(isset($_GET['ERRORS']))
@@ -82,7 +87,7 @@ else
 						<div style="padding:30px;">
                              <?php
 						    require_once "pdo.php";
-						    $loc = NULL;
+						    $loc = 'images/def.jpg';
 						$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
 					$stmt123 = $pdo -> prepare($sql123);
 					$stmt123 -> execute(array(':Data123' => $_GET['EVENT_ID']));
@@ -163,7 +168,7 @@ if($count==0)
 echo '	
 						<header class="align-center">
 						<p class="special"></p>
-						<h2>You haven\'t participated in any event !! <br><br><br></h2>
+						<h2>No comment posted yet !! <br><br><br></h2>
 					</header>
 						
 					';
@@ -184,7 +189,7 @@ echo '
 					</ul>
 				</div>
 				<div class="copyright">
-					&copy; Untitled. All rights reserved.
+					&copy; IIITRANCHI. All rights reserved.
 				</div>
 			</footer>
 
@@ -197,3 +202,7 @@ echo '
 
 	</body>
 </html>
+<!--
+                                             Authors
+        Rishav Mazumdar ( 2019UGEC013R )                Tushar Jain ( 2019UGCS001R )
+-->   

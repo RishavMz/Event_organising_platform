@@ -1,7 +1,7 @@
 <?php include('server.php') ?>
 <?php 
   
-
+    /*This page shows details about the organiser and its all organised events*/
  
   if (isset($_GET['ORGANISER_ID'])) {
   	$organiser_id=$_GET['ORGANISER_ID'];
@@ -246,7 +246,7 @@ while($r=mysqli_fetch_assoc($resul))
 								<div class="image fit">');
 								
 						    require_once "pdo.php";
-						    $loc = NULL;
+						    $loc = 'images/img_default.jpg';
 						$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
 					$stmt123 = $pdo -> prepare($sql123);
 					$stmt123 -> execute(array(':Data123' => $id));

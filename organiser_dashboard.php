@@ -1,11 +1,18 @@
 <?php
+/*
+    This file contains the page for organiser dashboard.
+    This page shows details of various events(past, present and future) organised by the particular organisation.
+    It also shows delails of any particular event.
+    Also provides the organiser an option to add a new event , or update an existing one.
+*/  
+
 session_start();
-if(!isset($_SESSION['username']))
+if(!isset($_SESSION['username']))		//Verification of authentic access
 {
 	header("location:login.php");
 }
 $Data = NULL;
-if(isset($_GET['ACTION']))
+if(isset($_GET['ACTION']))				//Handle formfeed for action button click
 {
 	if($_GET['ACTION'] == 'DETAILS')
 	{
@@ -24,7 +31,7 @@ if(isset($_GET['ACTION']))
 	}
 }
 require_once "pdo.php";
-if(!isset($_SESSION['Organiser_Institute']))
+if(!isset($_SESSION['Organiser_Institute']))		//Obtains data about organising institute
 {
     $sql = "SELECT * FROM ORGANISER WHERE USERNAME = :OID";
     $stmt = $pdo -> prepare($sql);
@@ -37,6 +44,7 @@ if(!isset($_SESSION['Organiser_Institute']))
 
 $ORGANISER_ID = $_SESSION['Organiser_id'] ;
 
+		//Handles data sent through POST parameters using form feed
 if(isset($_POST['ENAME']) && isset($_POST['SDATE']) && isset($_POST['STIME']) && isset($_POST['EDATE']) && isset($_POST['ETIME']) && isset($_POST['PRIZES']) && isset($_POST['DESCRIPTION']) && isset($_POST['REGISTRATION_FORM']))
 {	$begin=htmlentities($_POST['SDATE'])." ".htmlentities($_POST['STIME']).":00";
 	$end=htmlentities($_POST['EDATE'])." ".htmlentities($_POST['ETIME']).":00";
@@ -57,9 +65,8 @@ if(isset($_POST['ENAME']) && isset($_POST['SDATE']) && isset($_POST['STIME']) &&
 	$_SESSION['message'] = "Record successfully added.";
 }
 
-
-
-$sql1 = "SELECT * FROM EVENTS WHERE END_DATE_TIME <= cast((NOW()) AS date);";
+			//For past events
+	$sql1 = "SELECT * FROM EVENTS WHERE END_DATE_TIME <= cast((NOW()) AS date);";
     $stmt = $pdo -> prepare($sql1);
     $stmt -> execute();
     $row1 = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -68,7 +75,7 @@ $sql1 = "SELECT * FROM EVENTS WHERE END_DATE_TIME <= cast((NOW()) AS date);";
         $stmt11 = $pdo -> prepare($sql11);
 		$stmt11 -> execute(array(":evid1" => $rows['EVENT_ID'],));
 	}
-
+			//For present events
 	$sql1 = "SELECT * FROM EVENTS WHERE BEGIN_DATE_TIME >= cast((NOW()) AS date);";
     $stmt = $pdo -> prepare($sql1);
     $stmt -> execute();
@@ -78,7 +85,7 @@ $sql1 = "SELECT * FROM EVENTS WHERE END_DATE_TIME <= cast((NOW()) AS date);";
         $stmt11 = $pdo -> prepare($sql11);
 		$stmt11 -> execute(array(":evid1" => $rows['EVENT_ID'],));
 	}
-
+			//for future events
 	$sql1 = "SELECT * FROM EVENTS WHERE BEGIN_DATE_TIME < cast((NOW()) AS date) AND END_DATE_TIME > cast((NOW()) AS date);";
     $stmt = $pdo -> prepare($sql1);
     $stmt -> execute();
@@ -88,8 +95,6 @@ $sql1 = "SELECT * FROM EVENTS WHERE END_DATE_TIME <= cast((NOW()) AS date);";
         $stmt11 = $pdo -> prepare($sql11);
 		$stmt11 -> execute(array(":evid1" => $rows['EVENT_ID'],));
 	}
-    
-
 ?>
 
 <html>
@@ -101,21 +106,12 @@ $sql1 = "SELECT * FROM EVENTS WHERE END_DATE_TIME <= cast((NOW()) AS date);";
 		<link rel="stylesheet" type="text/css" href="style.css">
 	</head>
 	<body class = "subpage">
-	
-
 		<header id="header" class="reveal" >
 			<div class="logo">
 			<a href="#">Organiser Dashboard</a>
-			
 			</div>
 				<a href = "organiser_homepage.php"> Home</a>
 		</header>
-
-
-			
-			
-		
-
 		<section id="One" class="wrapper style3">			
 			<div class="inner">
 				<header class="align-center">
@@ -133,15 +129,17 @@ $sql1 = "SELECT * FROM EVENTS WHERE END_DATE_TIME <= cast((NOW()) AS date);";
 		{
 		    echo("<div class = 'error success'>".$_SESSION['message']."</div>");
 		    unset($_SESSION['message']);
-		}?>
+		}
+		?>
 		<br>
 		<div style = "margin-left:50px; margin-right:50px;">
 		<div class = "table wrapper">
-				<table>
-					<caption>
-						Past Events</caption>
-				<thead>
-					<tr>
+		<table>
+			<caption>
+				Past Events
+			</caption>
+			<thead>
+				<tr>
 					<td>Events</td>
 					<td>Start Date & Time</td>
 					<td>End Date & Time </td>
@@ -149,8 +147,8 @@ $sql1 = "SELECT * FROM EVENTS WHERE END_DATE_TIME <= cast((NOW()) AS date);";
 					<td>Visible</td>
 					<td>Action</td>
 				</tr>
-                </thead>
-                <?php
+            </thead>
+            <?php
                 
                 $sql = "SELECT * FROM EVENTS  WHERE ORGANISER_ID = :OID AND STATUS = 'PAST';";
                 $stmt = $pdo -> prepare($sql);
@@ -169,7 +167,6 @@ $sql1 = "SELECT * FROM EVENTS WHERE END_DATE_TIME <= cast((NOW()) AS date);";
                     echo("<td>".$rows['EVENT_NAME']."</td>");
                     echo("<td>".$rows['BEGIN_DATE_TIME'] ."</td>");
 					echo("<td>".$rows['END_DATE_TIME'] ."</td>");
-					
 					echo("<td>".$rows['REGISTRATIONS'] ."</td>");
 					echo("<td>".$astatus ."</td>");
                     echo('<td><a href = "organiser_dashboard.php?ACTION=DETAILS&EVENT_ID='.$rows['EVENT_ID'].'" class = "button special">Details</a>		<a href = "organiser_dashboard.php?ACTION=EDIT&EVENT_ID='.$rows['EVENT_ID'].'" class = "button special">Edit</a>		<a href = "organiser_dashboard.php?ACTION=DELETE&EVENT_ID='.$rows['EVENT_ID'].'" class = "button special" >Delete</a></td>');
@@ -177,15 +174,14 @@ $sql1 = "SELECT * FROM EVENTS WHERE END_DATE_TIME <= cast((NOW()) AS date);";
                 }
                 ?>
 			</table>
-			</div>
-
-			<div class = "table wrapper">
-				<table>
-					<caption>
-						Present Events
+		</div>
+		<div class = "table wrapper">
+			<table>
+				<caption>
+					Present Events
 			</caption>
-				<thead>
-					<tr>
+			<thead>
+				<tr>
 					<td>Events</td>
 					<td>Start Date & Time</td>
 					<td>End Date & Time </td>
@@ -193,8 +189,8 @@ $sql1 = "SELECT * FROM EVENTS WHERE END_DATE_TIME <= cast((NOW()) AS date);";
 					<td>Visible</td>
 					<td>Action</td>
 				</tr>
-                </thead>
-                <?php
+            </thead>
+            <?php
                 $sql = "SELECT * FROM EVENTS  WHERE ORGANISER_ID = :OID AND STATUS = 'PRESENT';";
                 $stmt = $pdo -> prepare($sql);
                 $stmt -> execute(array(':OID' => $_SESSION['Organiser_id']));
@@ -221,16 +217,11 @@ $sql1 = "SELECT * FROM EVENTS WHERE END_DATE_TIME <= cast((NOW()) AS date);";
                 }
                 ?>
 			</table>
-			</div>
-
-
-
-
-
-			<div class = "table wrapper">
-				<table>
-					<caption>
-						Upcoming Events
+		</div>
+		<div class = "table wrapper">
+			<table>
+				<caption>
+					Upcoming Events
 			</caption>
 				<thead>
 					<tr>
@@ -241,8 +232,8 @@ $sql1 = "SELECT * FROM EVENTS WHERE END_DATE_TIME <= cast((NOW()) AS date);";
 					<td>Visible</td>
 					<td>Action</td>
 				</tr>
-                </thead>
-                <?php
+            </thead>
+            <?php
                 $sql = "SELECT * FROM EVENTS  WHERE ORGANISER_ID = :OID AND STATUS = 'UPCOMING';";
                 $stmt = $pdo -> prepare($sql);
                 $stmt -> execute(array(':OID' => $_SESSION['Organiser_id']));
@@ -260,8 +251,7 @@ $sql1 = "SELECT * FROM EVENTS WHERE END_DATE_TIME <= cast((NOW()) AS date);";
                     echo("<tr>");
                     echo("<td>".$rows['EVENT_NAME']."</td>");
                     echo("<td>".$rows['BEGIN_DATE_TIME'] ."</td>");
-					echo("<td>".$rows['END_DATE_TIME'] ."</td>");
-					
+					echo("<td>".$rows['END_DATE_TIME'] ."</td>");	
 					echo("<td>".$rows['REGISTRATIONS'] ."</td>");
 					echo("<td>".$astatus ."</td>");
                     echo('<td><a href = "organiser_dashboard.php?ACTION=DETAILS&EVENT_ID='.$rows['EVENT_ID'].'" class = "button special">Details</a>		<a href = "organiser_dashboard.php?ACTION=EDIT&EVENT_ID='.$rows['EVENT_ID'].'" class = "button special">Edit</a>		<a href = "organiser_dashboard.php?ACTION=DELETE&EVENT_ID='.$rows['EVENT_ID'].'" class = "button special" >Delete</a></td>');
@@ -270,32 +260,29 @@ $sql1 = "SELECT * FROM EVENTS WHERE END_DATE_TIME <= cast((NOW()) AS date);";
                 ?>
 			</table>
 			</div>
-
-
 			</div>
 			<div id="main" class="container">
-
 				<div class="content">
-				<header class = "align-center">
-					
+				<header class = "align-center">					
 					<p>
 						Please click on details button of any event from above to view its details
 					</p>
-					<h2><br>
+					<h2>		<br>
 						Details
 					</h2>
-					<p></p>
+					<p>		</p>
 					<div style="word-wrap:break-word;">
 					<?php
-					$loc = 'images/img_default.jpg';
-						$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
+					$loc = 'images/def.jpg';
+					$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
 					$stmt123 = $pdo -> prepare($sql123);
 					$stmt123 -> execute(array(':Data123' => $Data));
 					$row123 = $stmt123->fetchAll(PDO::FETCH_ASSOC);
 					foreach($row123 as $re)
-					{$loc = $re['IMAGES'];
-					break;}
-					
+					{
+						$loc = $re['IMAGES'];
+						break;
+					}					
 					$sql = "SELECT * FROM EVENTS  WHERE EVENT_ID = :Data";
 					$stmt = $pdo -> prepare($sql);
 					$stmt -> execute(array(':Data' => $Data,));
@@ -313,7 +300,8 @@ $sql1 = "SELECT * FROM EVENTS WHERE END_DATE_TIME <= cast((NOW()) AS date);";
 					    else 
 					    {
 					        $astatus = "Deleted";
-					    }
+						}
+								//Shows details about selected event
 					    echo("<img src='".$loc."' width = 600em height = auto style='max-width:100%;' alt ='Image Unavailable'/>");
 						echo("<h1><br><br>");
 						echo("<b>Event Name</b>			:	<br>".$rows['EVENT_NAME']."<br><br>");
@@ -326,22 +314,18 @@ $sql1 = "SELECT * FROM EVENTS WHERE END_DATE_TIME <= cast((NOW()) AS date);";
 						echo("<b>Prizes</b>			 	:	<br>".$rows['PRIZES']."<br><br>" );
 						echo("<b>Description</b>			:	<br>".$rows['DESCRIPTION']."<br><br>" );
 						echo("</h1>");
-					}
+						}
 						?>
 						</div>
 					<?php
 					if(isset($_GET['EVENT_ID'])){ echo('<a href = "comment_QA.php?EVENT_ID='. $_GET['EVENT_ID'].' " class = "button">Queries and comments</a>');}?>
 				</header><br>
 				</div>
-
 			</div>
-			
-			
 			<div class="content">
 					<br>Add an event:
 					<br><br>
 				<form method = "post">
-					
 					<div class = "6u 12u$(small)">
 						<label for="Ename">Event Name</label><input type="text" name="ENAME" id="Ename" value placeholder="Competion Event name" required>
 					</div><br>
@@ -361,17 +345,16 @@ $sql1 = "SELECT * FROM EVENTS WHERE END_DATE_TIME <= cast((NOW()) AS date);";
 					<div class="12u$">
 						<label for="description">Description</label>
 						<textarea name="DESCRIPTION" id="message" placeholder="Enter a breif description of your competition." rows="6" cols="20"></textarea>
-					</div><br>
-										
+					</div><br>										
                         <p>Note- upload poster for your event in edit section after submitting this form.</p>
 					<br>
 					<input type = "submit" value="add" name="Add" class = "button special ">              
 					<button type = "button" value="Clear" name="Clear" class = "button special " onclick="location.href='organiser_dashboard.php';">Clear</button>
 				</form>
 		</div>
-<br><br>
-<!-- Footer -->
-<footer id="footer">
+	<br><br>
+	<!-- Footer -->
+	<footer id="footer">
 				<div class="container">
 					<ul class="icons">
 						<li><a href="https://twitter.com/IIITRanchi" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
@@ -383,9 +366,9 @@ $sql1 = "SELECT * FROM EVENTS WHERE END_DATE_TIME <= cast((NOW()) AS date);";
 				<div class="copyright">
 					&copy; IIITRANCHI. All rights reserved.
 				</div>
-			</footer>
+	</footer>
 
-		<!-- Scripts -->
+	<!-- Scripts -->
 			<script src="assets/js/jquery.min.js"></script>
 			<script src="assets/js/jquery.scrollex.min.js"></script>
 			<script src="assets/js/skel.min.js"></script>
@@ -397,9 +380,15 @@ $sql1 = "SELECT * FROM EVENTS WHERE END_DATE_TIME <= cast((NOW()) AS date);";
 </html>
 
 <style>
-	caption{
+	caption
+	{
 		font-size : 1.8em;
 		font-weight:bold;
 	}
 	
-	</style>
+</style>
+
+<!-- 
+                                               Authors:
+         Rishav Mazumdar ( 2019UGEC013R )           Tushar Jain ( 2019UGCS001R )
+-->                

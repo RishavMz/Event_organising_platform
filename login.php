@@ -1,5 +1,7 @@
 <?php include('server.php'); 
-
+        /*This is the login page.
+        It provides option for logging in as user, organiser or as admin.
+        The check for authenticity is done in server.php file*/
   ?>
 <!DOCTYPE HTML>
 
@@ -139,3 +141,7 @@
 
 	</body>
 </html>
+<!--
+                                             Authors
+        Rishav Mazumdar ( 2019UGEC013R )                Tushar Jain ( 2019UGCS001R )
+-->   

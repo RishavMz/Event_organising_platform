@@ -1,5 +1,7 @@
-<?php include('server.php') ?>
-<?php
+<?php 
+    /*This file contains details about the event organised by an organiser.
+        This file also has a comments section for displaying all queries and comments for the particular event.*/
+include('server.php'); 
 if(isset($_GET['EVENT_ID']))
 { $id=$_GET['EVENT_ID'];
    if(isset($_GET['REVIEW']))
@@ -23,6 +25,7 @@ $sql = "select * from EVENTS
 where EVENT_ID='$id'
 ;";
 $result = mysqli_query($db,$sql);
+            // Loads data about a particular event from events table
 if($result)
 {$r=mysqli_fetch_assoc($result);
   $event_name=$r['EVENT_NAME'];
@@ -49,6 +52,7 @@ $sql = "select INSTITUTE,NAME,USERNAME from ORGANISER
 where ORGANISER_ID='$organiser_id'
 ;";
 $resul = mysqli_query($db,$sql);
+        //Loads data about the organiser
 if($resul)
 {$rr=mysqli_fetch_assoc($resul);
  $username=$rr['USERNAME'];
@@ -106,7 +110,7 @@ $show=1;
 						<div style="padding:30px;">
                              <?php
 						    require_once "pdo.php";
-						    $loc = NULL;
+						    $loc = 'images/def.jpg';
 						$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
 					$stmt123 = $pdo -> prepare($sql123);
 					$stmt123 -> execute(array(':Data123' => $_GET['EVENT_ID']));
@@ -163,6 +167,7 @@ $sql = "select * from COMMENTS_QUERIES
 where EVENT_ID='$id'
 ;";
 $result = mysqli_query($db,$sql);
+                //Displays queries for the event
 if($result){
      echo ' <div id="main" class="container">
                           <header>
@@ -178,6 +183,7 @@ if($result){
           where QUERY_ID='$query_id'
            ;";
           $resul = mysqli_query($db,$sq);
+                        //Displays answers for the comment
          if($resul){
                 echo '<ul style="list-style: none;">';
                 while($rr=mysqli_fetch_assoc($resul)){
@@ -242,3 +248,7 @@ echo '
 
 	</body>
 </html>
+<!--
+                                             Authors
+        Rishav Mazumdar ( 2019UGEC013R )                Tushar Jain ( 2019UGCS001R )
+-->

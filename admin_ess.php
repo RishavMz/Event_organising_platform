@@ -1,5 +1,7 @@
 <?php
-
+/*This file shows the event organised when clicked on more button from admin dashboard.
+  This file allows the admin to mark for review or delete any event , and also has the option 
+  to navigate to the comments section for the particular event*/
 include('server.php') ?>
 <?php
 $review=0;
@@ -28,6 +30,7 @@ $sql = "select * from EVENTS
 where EVENT_ID='$id'
 ;";
 $result = mysqli_query($db,$sql);
+        //Loads data from events table
 if($result)
 {$r=mysqli_fetch_assoc($result);
   $event_name=$r['EVENT_NAME'];
@@ -55,6 +58,7 @@ $sql = "select INSTITUTE,NAME from ORGANISER
 where ORGANISER_ID='$organiser_id'
 ;";
 $resul = mysqli_query($db,$sql);
+        //Loads data about the organiser name and organiser institute
 if($resul)
 {$rr=mysqli_fetch_assoc($resul);
   $institute_name=$rr['INSTITUTE'];
@@ -192,7 +196,7 @@ else
 						<div style="padding:30px;">
 						    <?php
 						    require_once "pdo.php";
-						    $loc = NULL;
+						    $loc = 'images/def.jpg';
 						$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
 					$stmt123 = $pdo -> prepare($sql123);
 					$stmt123 -> execute(array(':Data123' => $_GET['EVENT_ID']));
@@ -336,3 +340,9 @@ window.onclick = function(event) {
 
 	</body>
 </html>
+
+
+<!-- 
+                                               Authors:
+         Rishav Mazumdar ( 2019UGEC013R )                Tushar Jain ( 2019UGCS001R )
+-->              
