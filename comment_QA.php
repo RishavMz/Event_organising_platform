@@ -1,5 +1,10 @@
 <?php
+/*This file contains the page which handles he comment section for an organised event for the organiser.
+The organiser can reply to queries posted by users and admin.
+The organiser can also delete any potential inappropriate or offensive query*/
+
 session_start();
+        //Confirm authentic access
 if(!isset($_SESSION['username']))
 {
 	header("location:organiser_dashboard.php");
@@ -9,17 +14,19 @@ if(isset($_GET['EVENT_ID']))
 	$_SESSION['TEMP'] = $_GET['EVENT_ID'];
 }
 require_once "pdo.php";
+        //Handles POST data sent by form feilds for storing in database
 if(isset($_POST['comment']) && isset($_POST['reply'])  && isset($_POST['query_id']))
-{
+{   
 	$sql = "INSERT INTO COMMENTS_ANSWERS(EVENT_ID , QUERY_ID , AUTHOR , ANSWER) VALUES(:V1 , :V2 , :V3 , :V4)";
     $stmt = $pdo -> prepare($sql);
 	$stmt -> execute(array('V1'=>$_SESSION['TEMP'],
 								'V2' =>$_POST['query_id'],
-							'V3' => $_SESSION['Organiser_Name'],
-						'V4' =>htmlentities( $_POST['comment']),));
-						$_SESSION['message'] = "Reply added successfully.";
+							    'V3' => $_SESSION['Organiser_Name'],
+						        'V4' =>htmlentities( $_POST['comment']),));
+	$_SESSION['message'] = "Reply added successfully.";
 
 }
+        //Code to delete any query considered inappropriate or offensive by the organiser
 else if( isset($_POST['delete']) && isset($_POST['query_id']))
 {
 	$sql = "DELETE FROM COMMENTS_ANSWERS WHERE QUERY_ID = :qid";
@@ -31,7 +38,8 @@ else if( isset($_POST['delete']) && isset($_POST['query_id']))
 	$_SESSION['message'] = "Query and its comments deleted.";
 }
 if(!isset($_SESSION['Organiser_Institute']))
-{
+{     
+        //Loads data about the organiser institute
     $sql = "SELECT NAME,INSTITUTE FROM ORGANISER WHERE ORGANISER_ID = :OID";
     $stmt = $pdo -> prepare($sql);
     $stmt -> execute(array(':OID' => $_SESSION['Organiser_id']));
@@ -69,42 +77,49 @@ if(!isset($_SESSION['Organiser_Institute']))
 		<div id="main" class="container">
             <br>
             <?php
-		if(isset($_SESSION['message']))
-		{
-		    echo("<div class = 'error success'>".$_SESSION['message']."</div>");
-		    unset($_SESSION['message']);
-		}?><br>
+            if(isset($_SESSION['message']))
+            {
+                echo("<div class = 'error success'>".$_SESSION['message']."</div>");
+                unset($_SESSION['message']);
+            }
+            ?><br>
 			
 			<header>
 				<?php
+                        //Loads all the queries for the particular event 
 				$sql = "SELECT * FROM COMMENTS_QUERIES WHERE EVENT_ID = :snid";
 				$stmt = $pdo -> prepare($sql);
 				$stmt -> execute(array('snid' => $_SESSION['TEMP'],));
 				$row = $stmt->fetchAll(PDO::FETCH_ASSOC);
 				foreach($row as $rows)
-				{   if(count($row) == 0){
-				    echo("<h2>No queries have been posted for this event yet.</h2>");
-				}
+                {   if(count($row) == 0)
+                    {
+				        echo("<h2>No queries have been posted for this event yet.</h2>");
+                    }
+                            //displays all queries for an event 
 					echo('<div class="content">');
-					 echo("<ul><li>");
+					echo("<ul><li>");
 					$QID = $rows['QUERY_ID'];
 					echo("<h2>".$rows['QUERY']."</h2>");
-				echo("<p>	<t>".$rows['AUTHOR']."</t></p>");
+                    echo("<p>	<t>".$rows['AUTHOR']."</t></p>");
+                            //Displays all comments for each query
 					$sql1 = "SELECT * FROM COMMENTS_ANSWERS WHERE QUERY_ID = :sn";
 					$stmt1 = $pdo -> prepare($sql1);
 					$stmt1 -> execute(array('sn' => $QID,));
 					$row1 = $stmt1->fetchAll(PDO::FETCH_ASSOC);
 					foreach($row1 as $rows1)
 					{
-				echo('<ul style="list-style: none;">
-					<li>
-						<blockquote>');
-				echo($rows1['ANSWER']);
-				echo("<p> <t>".$rows1['AUTHOR']."</t></p>");
-				echo("		</blockquote>
-					</li>
-			</ul>
-				<br>");}?>
+                        echo('<ul style="list-style: none;">
+                            <li>
+                                <blockquote>');
+                        echo($rows1['ANSWER']);
+                        echo("<p> <t>".$rows1['AUTHOR']."</t></p>");
+                        echo("		</blockquote>
+                            </li>
+                            </ul>
+                            <br>"); 
+                    }
+                    ?>
 				<form method = "post" name = "<?php $QID?>">
 					<textarea name = "comment" value placeholder="Add a reply"></textarea>
 				<br>
@@ -121,7 +136,7 @@ if(!isset($_SESSION['Organiser_Institute']))
 		</div>
 
 		<!-- Footer -->
-<footer id="footer">
+        <footer id="footer">
 				<div class="container">
 					<ul class="icons">
 						<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
@@ -142,7 +157,11 @@ if(!isset($_SESSION['Organiser_Institute']))
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
 
-
-
 	</body>
 </html>
+
+
+<!-- 
+                                               Authors:
+         Rishav Mazumdar ( 2019UGEC013R )           Tushar Jain ( 2019UGCS001R )
+-->                

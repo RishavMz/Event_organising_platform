@@ -1,4 +1,7 @@
 <?php
+//This file has been made to facilitate sql connectivity and majority of form action.
+//This file is imported in many files throughout this application
+    
 session_start();
 
 // initializing variables

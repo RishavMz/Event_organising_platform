@@ -1,4 +1,8 @@
 <?php
+/* This file contains the page for admin comment section for an event.
+    The admin can ask any query, or reply to any previousle posted query.
+    The admin can also delete a query if found inappropriate or offending.
+*/    
 session_start();
 
 if(isset($_GET['EVENT_ID']))
@@ -7,27 +11,26 @@ if(isset($_GET['EVENT_ID']))
 }
 require_once "pdo.php";
 if(isset($_POST['comment']) && isset($_POST['reply'])  && isset($_POST['query_id']))
-{
+{               //Handling reply to query
 	$sql = "INSERT INTO COMMENTS_ANSWERS(EVENT_ID , QUERY_ID , AUTHOR , ANSWER) VALUES(:V1 , :V2 , 'ADMIN', :V4)";
     $stmt = $pdo -> prepare($sql);
 	$stmt -> execute(array('V1'=>$_SESSION['TEMP'],
-								'V2' =>$_POST['query_id'],
-						'V4' => htmlentities($_POST['comment']),));
-						$_SESSION['message'] = "Reply added successfully.";
+						   'V2' =>$_POST['query_id'],
+						   'V4' => htmlentities($_POST['comment']),));
+	$_SESSION['message'] = "Reply added successfully.";
 
 }
 if(isset($_POST['query']) && isset($_POST['POST']) )
-{
+{               //Handling posting of a query
 	$sql = "INSERT INTO COMMENTS_QUERIES(EVENT_ID , QUERY, AUTHOR) VALUES(:V1 , :V2 , 'ADMIN')";
     $stmt = $pdo -> prepare($sql);
 	$stmt -> execute(array('V1'=>$_SESSION['TEMP'],
-								'V2' => htmlentities($_POST['query']),
-						));
-						$_SESSION['message'] = "Query added successfully.";
+						   'V2' => htmlentities($_POST['query']),));
+	$_SESSION['message'] = "Query added successfully.";
 
 }
 else if( isset($_POST['delete']) && isset($_POST['query_id']))
-{
+{               //Handling deletion of an inappropriate query
 	$sql = "DELETE FROM COMMENTS_ANSWERS WHERE QUERY_ID = :qid";
 	$stmt = $pdo -> prepare($sql);
 	$stmt -> execute(array(':qid' => $_POST['query_id']));
@@ -37,7 +40,7 @@ else if( isset($_POST['delete']) && isset($_POST['query_id']))
 	$_SESSION['message'] = "Query and its comments deleted.";
 }
 if(isset($_GET['ORGANISER_ID']))
-{
+{               //Loads the data about the particular organiser organising the event
     $sql = "SELECT NAME,INSTITUTE FROM ORGANISER WHERE ORGANISER_ID = :OID";
     $stmt = $pdo -> prepare($sql);
     $stmt -> execute(array(':OID' => $_GET['ORGANISER_ID']));
@@ -49,7 +52,7 @@ if(isset($_GET['ORGANISER_ID']))
 ?>
 <html>
 	<head>
-		<title>Organiser Dashboard</title>
+		<title>Comments</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="assets/css/main.css" />
@@ -79,7 +82,9 @@ if(isset($_GET['ORGANISER_ID']))
 		{
 		    echo("<div class = 'error success'>".$_SESSION['message']."</div>");
 		    unset($_SESSION['message']);
-		}?><br>
+		}
+		?>
+		<br>
 			
 			<header>
             <form method = "post" name = "query">
@@ -87,13 +92,14 @@ if(isset($_GET['ORGANISER_ID']))
 					<textarea name = "query" value placeholder="Add a query"></textarea>
 				<br>
 				<div class="6u$ 12u$(small)">
-			</div>
+			    </div>
 				<button class = "button special" id="POST" value = "POST" name = "POST" onclick = post>POST</button>
 				<button class="button special" id="clear" value = "clear" name="clear" onclick = location.href="#">CLEAR</button>
 				<br>
-				</form>
-				<br><br><br>
-				<?php
+			</form>
+			<br><br><br>
+			<?php
+				                //Displays all the queries
 				$sql = "SELECT * FROM COMMENTS_QUERIES WHERE EVENT_ID = :snid";
 				$stmt = $pdo -> prepare($sql);
 				$stmt -> execute(array('snid' => $_SESSION['TEMP'],));
@@ -102,26 +108,29 @@ if(isset($_GET['ORGANISER_ID']))
 				{   if(count($row) == 0){
 				    echo("<h2>No queries have been posted for this event yet.</h2>");
 				}
-					echo('<div class="content">');
-					 echo("<ul><li>");
-					$QID = $rows['QUERY_ID'];
-					echo("<h2>".$rows['QUERY']."</h2>");
-				echo("<p>	<t>".$rows['AUTHOR']."</t></p>");
-					$sql1 = "SELECT * FROM COMMENTS_ANSWERS WHERE QUERY_ID = :sn";
-					$stmt1 = $pdo -> prepare($sql1);
-					$stmt1 -> execute(array('sn' => $QID,));
-					$row1 = $stmt1->fetchAll(PDO::FETCH_ASSOC);
-					foreach($row1 as $rows1)
-					{
-				echo('<ul style="list-style: none;">
-					<li>
-						<blockquote>');
+				echo('<div class="content">');
+				echo("<ul><li>");
+				$QID = $rows['QUERY_ID'];
+				echo("<h2>".$rows['QUERY']."</h2>");
+			    echo("<p>	<t>".$rows['AUTHOR']."</t></p>");
+				            //Displays the comments for each query
+				$sql1 = "SELECT * FROM COMMENTS_ANSWERS WHERE QUERY_ID = :sn";
+				$stmt1 = $pdo -> prepare($sql1);
+				$stmt1 -> execute(array('sn' => $QID,));
+				$row1 = $stmt1->fetchAll(PDO::FETCH_ASSOC);
+				foreach($row1 as $rows1)
+				{
+			    echo('<ul style="list-style: none;">
+				<li>
+				<blockquote>');
 				echo($rows1['ANSWER']);
-				echo("<p> <t>".$rows1['AUTHOR']."</t></p>");
-				echo("		</blockquote>
-					</li>
-			</ul>
-				<br>");}?>
+			    echo("<p> <t>".$rows1['AUTHOR']."</t></p>");
+			    echo("		</blockquote>
+				</li>
+		        </ul>
+			    <br>");
+			    }
+			?>
 				<form method = "post" name = "<?php $QID?>">
 					<textarea name = "comment" value placeholder="Add a reply"></textarea>
 				<br>
@@ -138,7 +147,7 @@ if(isset($_GET['ORGANISER_ID']))
 		</div>
 
 		<!-- Footer -->
-<footer id="footer">
+            <footer id="footer">
 				<div class="container">
 					<ul class="icons">
 						<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
@@ -163,3 +172,8 @@ if(isset($_GET['ORGANISER_ID']))
 
 	</body>
 </html>
+
+<!--
+                                             Authors
+        Rishav Mazumdar ( 2019UGEC013R )                Tushar Jain ( 2019UGCS001R )
+-->        

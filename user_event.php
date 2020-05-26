@@ -1,66 +1,84 @@
-<?php include('server.php') ?>
+<?php 
+/* This file contains the page for details of the event selected.
+    The user can register for the event here.
+    The user can post queries/comments for the event.
+*/   
+include('server.php');
+?>
 <?php
 $err=0;
 $register=0;
+
 if(isset($_GET['EVENT_ID']))
-{ $id=$_GET['EVENT_ID'];
-  if(isset($_GET['ERRORS']))
- $err=$_GET['ERRORS'];
- if(isset($_GET['REGISTER']))
- $register=$_GET['REGISTER'];
+{
+    $id=$_GET['EVENT_ID'];
+    if(isset($_GET['ERRORS']))
+        $err=$_GET['ERRORS'];
+    if(isset($_GET['REGISTER']))
+        $register=$_GET['REGISTER'];
     
 }
+
 $name=$_SESSION['username'];
- $sql = "SELECT * FROM USERS WHERE USERNAME = '$name';";
-  $result = mysqli_query($db, $sql);
-  $user = mysqli_fetch_assoc($result);
+//select details of the user from users table
+$sql = "SELECT * FROM USERS WHERE USERNAME = '$name';";
+$result = mysqli_query($db, $sql);
+$user = mysqli_fetch_assoc($result);
   
-  if ($user) { // if user exists
-$user_id=$user['USER_ID'];}
+if ($user) 
+{ 
+    // if user exists
+    $user_id=$user['USER_ID'];}
 else
- echo("Error description: " . mysqli_error($db));
- 
+   echo("Error description: " . mysqli_error($db));
+
+//check if user has already registered for the event or not 
 $user_check_query = "SELECT * FROM USER_DATA WHERE USER_ID='$user_id' AND EVENT_PARTICIPATING_ID='$id' LIMIT 1";
 $result = mysqli_query($db, $user_check_query);
 $user = mysqli_fetch_assoc($result);
-  
-  if ($user) { // if user exists
-    if ($user['USER_ID'] == $user_id) {
+if ($user)
+{    // if user exists
+    if ($user['USER_ID'] == $user_id) 
+    {
       $register=2;
     }
-
-   else
-   $register=1;
-  } 
+    else
+       $register=1;
+} 
  
-if($register==1){
+if($register==1)
+{
     	$query = "INSERT INTO USER_DATA (USER_ID, EVENT_PARTICIPATING_ID) 
   			  VALUES('$user_id', '$id')";
   	    if(mysqli_query($db, $query))
-  	{ $register=2;
-  	  	$query = "UPDATE EVENTS
-SET REGISTRATIONS=REGISTRATIONS+1
-WHERE EVENT_ID = '$id';";
-  	    if(mysqli_query($db, $query))
-  	{ $register=2;
+      	{ 
+      	    $register=2;
+  	  	    $query = "UPDATE EVENTS
+            SET REGISTRATIONS=REGISTRATIONS+1
+            WHERE EVENT_ID = '$id';";
+  	        if(mysqli_query($db, $query))
+  	        {
+  	            $register=2;
+  	        }
+  	        else{
+  	            echo("Error description: " . mysqli_error($db));
+  	        }
   	    
-  	}
-  	else{
-  	   echo("Error description: " . mysqli_error($db));
-  	  }
-  	    
-  	}
-  	else{
-  	   echo("Error description: " . mysqli_error($db));
-  	   $register=0;}
+  	    }
+  	    else
+  	    {
+  	     echo("Error description: " . mysqli_error($db));
+  	     $register=0;
+  	    }
 }
 
+//select event details from events table
 $sql = "select * from EVENTS 
-where EVENT_ID='$id' AND REVIEW = 0
-;";
+where EVENT_ID='$id' AND REVIEW = 0;";
 $result = mysqli_query($db,$sql);
 if($result)
-{$r=mysqli_fetch_assoc($result);
+{  
+  $r=mysqli_fetch_assoc($result);
   $event_name=$r['EVENT_NAME'];
   $begin=$r['BEGIN_DATE_TIME'];
   $end=$r['END_DATE_TIME'];
@@ -75,17 +93,19 @@ if($result)
 else
   	   echo("Error description: " . mysqli_error($db));
 
+//select organiser details from organiser table
 $sql = "select INSTITUTE,NAME from ORGANISER 
-where ORGANISER_ID='$organiser_id'
-;";
+where ORGANISER_ID='$organiser_id';";
 $resul = mysqli_query($db,$sql);
 if($resul)
-{$rr=mysqli_fetch_assoc($resul);
+{
+  $rr=mysqli_fetch_assoc($resul);
   $institute_name=$rr['INSTITUTE'];
   $organiser_name=$rr['NAME'];
 }
 else
   	   echo("Error description: " . mysqli_error($db));
+  	   
 ?>
 <!DOCTYPE HTML>
 
@@ -204,7 +224,7 @@ else
 						<div style="padding:30px;">
                              <?php
 						    require_once "pdo.php";
-						    $loc = NULL;
+						    $loc = 'images/def.jpg';
 						$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
 					$stmt123 = $pdo -> prepare($sql123);
 					$stmt123 -> execute(array(':Data123' => $_GET['EVENT_ID']));
@@ -419,3 +439,7 @@ window.onclick = function(event) {
 
 	</body>
 </html>
+<!--
+                                             Authors
+        Rishav Mazumdar ( 2019UGEC013R )                Tushar Jain ( 2019UGCS001R )
+-->   

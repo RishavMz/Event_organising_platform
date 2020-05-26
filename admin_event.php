@@ -1,66 +1,68 @@
+<?php 
+/* This file contains the detils of event selected.
+    The admin can mark the event for review or can also delete it in this section.
+*/  
+include('server.php');
+?>
 <?php
+   $review=0;
+   $status='';
+   if(isset($_GET['EVENT_ID']))
+   {
+       $id=$_GET['EVENT_ID'];
+       if(isset($_GET['REVIEW']))
+       {
+           $review=$_GET['REVIEW'];
+           $sql= "UPDATE EVENTS
+           SET REVIEW = '$review'
+           WHERE EVENT_ID = '$id';";
+           if(mysqli_query($db, $sql))
+    	   { 
+               $review=$review;
+           }
+  	       else
+  	           echo("Error description: " . mysqli_error($db));
+        }
+   }
 
-include('server.php') ?>
-<?php
-$review=0;
-$status='';
-if(isset($_GET['EVENT_ID']))
-{ $id=$_GET['EVENT_ID'];
-  if(isset($_GET['REVIEW'])){
- $review=$_GET['REVIEW'];
- $sql= "UPDATE EVENTS
-SET REVIEW = '$review'
-WHERE EVENT_ID = '$id';";
-
-if(mysqli_query($db, $sql))
-  	{ 
-  $review=$review;
-  	}
-  	else
-  	   echo("Error description: " . mysqli_error($db));
-  }
-}
-
-  	    
-  
-$name=$_SESSION['username'];
-$sql = "select * from EVENTS 
-where EVENT_ID='$id'
-;";
-$result = mysqli_query($db,$sql);
-if($result)
-{$r=mysqli_fetch_assoc($result);
-  $event_name=$r['EVENT_NAME'];
-  $begin=$r['BEGIN_DATE_TIME'];
-  $end=$r['END_DATE_TIME'];
-  $prizes=$r['PRIZES'];
-  $description=$r['DESCRIPTION'];
-  $id=$r['EVENT_ID'];
-  $path="images/".$id.".jpeg";
-  $organiser_id=$r['ORGANISER_ID'];
-  $form=$r['REGISTRATION_FORM'];
-  $status=$r['STATUS'];
-  $review=$r['REVIEW'];
-}
-else
+   $name=$_SESSION['username'];
+   $sql = "select * from EVENTS 
+   where EVENT_ID='$id';";
+   $result = mysqli_query($db,$sql);
+   if($result)
+   {
+       $r=mysqli_fetch_assoc($result);
+       $event_name=$r['EVENT_NAME'];
+       $begin=$r['BEGIN_DATE_TIME'];
+       $end=$r['END_DATE_TIME'];
+       $prizes=$r['PRIZES'];
+       $description=$r['DESCRIPTION'];
+       $id=$r['EVENT_ID'];
+       $path="images/".$id.".jpeg";
+       $organiser_id=$r['ORGANISER_ID'];
+       $form=$r['REGISTRATION_FORM'];
+       $status=$r['STATUS'];
+       $review=$r['REVIEW'];
+    }
+    else
   	   echo("Error description: " . mysqli_error($db));
 
-if($review==1)
-$status='Marked for review';
-elseif($review==2)
-$status='DELETED';
-else
-$status='Posted';
-$sql = "select INSTITUTE,NAME from ORGANISER 
-where ORGANISER_ID='$organiser_id'
-;";
-$resul = mysqli_query($db,$sql);
-if($resul)
-{$rr=mysqli_fetch_assoc($resul);
-  $institute_name=$rr['INSTITUTE'];
-  $organiser_name=$rr['NAME'];
-}
-else
+    if($review==1)
+       $status='Marked for review';
+    elseif($review==2)
+       $status='DELETED';
+    else
+       $status='Posted';
+    $sql = "select INSTITUTE,NAME from ORGANISER 
+    where ORGANISER_ID='$organiser_id';";
+    $resul = mysqli_query($db,$sql);
+    if($resul)
+    {
+        $rr=mysqli_fetch_assoc($resul);
+        $institute_name=$rr['INSTITUTE'];
+        $organiser_name=$rr['NAME'];
+    }
+    else
   	   echo("Error description: " . mysqli_error($db));
 ?>
 <!DOCTYPE HTML>
@@ -76,46 +78,46 @@ else
 	<style>
 	    body {font-family: Arial, Helvetica, sans-serif;}
 
-/* The Modal (background) */
-.modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  padding-top: 100px; /* Location of the box */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
+        /* The Modal (background) */
+        .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+       }
 
-/* Modal Content */
-.modal-content {
-  position: relative;
-  background-color: #fefefe;
-  margin: auto;
-  padding: 0;
-  border: 1px solid #888;
-  width: 80%;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-  -webkit-animation-name: animatetop;
-  -webkit-animation-duration: 0.4s;
-  animation-name: animatetop;
-  animation-duration: 0.4s
-}
+       /* Modal Content */
+       .modal-content {
+       position: relative;
+       background-color: #fefefe;
+       margin: auto;
+       padding: 0;
+       border: 1px solid #888;
+       width: 80%;
+       box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+       -webkit-animation-name: animatetop;
+       -webkit-animation-duration: 0.4s;
+       animation-name: animatetop;
+       animation-duration: 0.4s
+       }
 
-/* Add Animation */
-@-webkit-keyframes animatetop {
-  from {top:-300px; opacity:0} 
-  to {top:0; opacity:1}
-}
+      /* Add Animation */
+     @-webkit-keyframes animatetop {
+      from {top:-300px; opacity:0} 
+       to {top:0; opacity:1}
+       }
 
-@keyframes animatetop {
-  from {top:-300px; opacity:0}
-  to {top:0; opacity:1}
-}
+     @keyframes animatetop {
+     from {top:-300px; opacity:0}
+     to {top:0; opacity:1}
+     }
 
 /* The Close Button */
 .close {
@@ -192,7 +194,7 @@ else
 						<div style="padding:30px;">
                              <?php
 						    require_once "pdo.php";
-						    $loc = NULL;
+						    $loc = 'images/def.jpg';
 						$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
 					$stmt123 = $pdo -> prepare($sql123);
 					$stmt123 -> execute(array(':Data123' => $_GET['EVENT_ID']));
@@ -336,3 +338,7 @@ window.onclick = function(event) {
 
 	</body>
 </html>
+<!--
+                                             Authors
+        Rishav Mazumdar ( 2019UGEC013R )                Tushar Jain ( 2019UGCS001R )
+-->   

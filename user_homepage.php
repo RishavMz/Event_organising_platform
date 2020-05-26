@@ -1,91 +1,126 @@
-<?php include('server.php') ?>
+<?php
+/*  user Home page containg details of all the events posted by different organisers.
+    Note- events marked for review or deleted  will be hidden to users.
+*/  
+include('server.php');
+?>
 <?php 
   
-
+  //if user is not logged in.
   if (!isset($_SESSION['username'])) {
   	$_SESSION['msg'] = "You must log in first";
   	header('location: login.php');
   }
+  
+  //if user has opt to logout.
   if (isset($_GET['logout'])) {
   	session_destroy();
   	unset($_SESSION['username']);
   	header("location: login.php");
   }
+  
   $name=$_SESSION['username'];
+  
+  //check if organiser/admin session is currently running on the same device or not.
+  //if yes, end the session.
   $sql="SELECT NAME FROM USERS WHERE USERNAME= '$name';";
-  	if(mysqli_query($db, $sql)){
+  if(mysqli_query($db, $sql)){
   	$results = mysqli_query($db, $sql);
   	if (mysqli_num_rows($results) == 0) {
   	    	session_destroy();
-  	unset($_SESSION['username']);
-  	header("location: login.php");
+         	unset($_SESSION['username']);
+           	header("location: login.php");
   	}
   	
-  	}else
+  }else
   	 echo("Error description: " . mysqli_error($db));
 ?>
 <?php
-//connect database 
 
-$name= $_SESSION['username'];
-//select all values from empInfo table
-$running=0;
-$future=0;
-$past=0;
-$registered=0;
-$sql = "select * from EVENTS 
-where END_DATE_TIME >= cast((now()) as date) and BEGIN_DATE_TIME <= cast((now()) as date) AND REVIEW = 0
-;";
-$result = mysqli_query($db,$sql);
-if($result)
-{
-while($r=mysqli_fetch_assoc($result))
-{ $running=$running+1;}
-}
-	else
-  	   echo("Error description: " . mysqli_error($db));
-$sql = "select * from EVENTS 
-where END_DATE_TIME < cast((now()) as date) AND REVIEW = 0
-;";
-$result = mysqli_query($db,$sql);
-if($result)
-{
-while($r=mysqli_fetch_assoc($result))
-{ $past=$past+1;}
-}
-	else
-  	   echo("Error description: " . mysqli_error($db));
-$sql = "select * from EVENTS 
-where BEGIN_DATE_TIME >= cast((now()) as date) AND REVIEW = 0
-;";
-$result = mysqli_query($db,$sql);
-if($result)
-{
-while($r=mysqli_fetch_assoc($result))
-{ $future=$future+1;}
-}
-	else
-  	   echo("Error description: " . mysqli_error($db));
- $sql = "SELECT USER_ID FROM USERS WHERE USERNAME = '$name';";
-  $result = mysqli_query($db, $sql);
-  $user = mysqli_fetch_assoc($result);
+  $name= $_SESSION['username'];
+  $running=0;
+  $future=0;
+  $past=0;
+  $registered=0;
   
-  if ($user) { // if user exists
-$user_id=$user['USER_ID'];}
-else
-  echo("Error description: " . mysqli_error($db));
-$sql = "select * from USER_DATA 
-where USER_ID = $user_id
-;";
-$result = mysqli_query($db,$sql);
-if($result)
-{
-while($r=mysqli_fetch_assoc($result))
-{ $registered=$registered+1;}
-} 
+   //to findout number of running events
+   //only count those events which aren't marked/deleted.
+  $sql = "select * from EVENTS 
+  where END_DATE_TIME >= cast((now()) as date) and BEGIN_DATE_TIME <= cast((now()) as date) AND REVIEW = 0;";
+  $result = mysqli_query($db,$sql);
+  if($result)
+  {
+     while($r=mysqli_fetch_assoc($result))
+     { 
+         $running=$running+1;
+         
+     }
+  }
+  else
+  	   echo("Error description: " . mysqli_error($db));
+  	   
+   //to findout number of past events
+   //only count those events which aren't marked/deleted.
+   $sql = "select * from EVENTS 
+   where END_DATE_TIME < cast((now()) as date) AND REVIEW = 0;";
+   $result = mysqli_query($db,$sql);
+   if($result)
+   {
+      while($r=mysqli_fetch_assoc($result))
+      { 
+          $past=$past+1;
+          
+      }
+    }
 	else
+  	   echo("Error description: " . mysqli_error($db));
+  	   
+  	 //to findout number of future events
+     //only count those events which aren't marked/deleted.
+     $sql = "select * from EVENTS 
+     where BEGIN_DATE_TIME >= cast((now()) as date) AND REVIEW = 0;";
+     $result = mysqli_query($db,$sql);
+     if($result)
+     {
+         while($r=mysqli_fetch_assoc($result))
+         { 
+             $future=$future+1;
+             
+         }
+     }
+	else
+  	   echo("Error description: " . mysqli_error($db));
+  	   
+   //fetch user id from users table    
+   $sql = "SELECT USER_ID FROM USERS WHERE USERNAME = '$name';";
+   $result = mysqli_query($db, $sql);
+   $user = mysqli_fetch_assoc($result);
+   if ($user) 
+   { 
+        // if user exists
+        $user_id=$user['USER_ID'];
+       
+   }
+   else
+       echo("Error description: " . mysqli_error($db));
+       
+   //to findout number of events in which user have registered.
+   //only count those events which aren't marked/deleted.
+   $sql = "select * from USER_DATA 
+   where USER_ID = $user_id;";
+   $result = mysqli_query($db,$sql);
+   if($result)
+   {
+       while($r=mysqli_fetch_assoc($result))
+       {
+           $registered=$registered+1;
+           
+       }
+   } 
+   else
   	   echo("Error description: " . mysqli_error($db));
 ?>
+
 <!DOCTYPE HTML>
 
 <html>
@@ -95,7 +130,7 @@ while($r=mysqli_fetch_assoc($result))
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 	</head>
-           <style>
+    <style>
 * {
   box-sizing: border-box;
 }
@@ -170,16 +205,7 @@ while($r=mysqli_fetch_assoc($result))
 						</header>
 					</div>
 				</article>
-				<!--<article>
-					<img src="images/slide04.jpg"  alt="" />
-                    <div class="inner">
-						<header>
-							<p>Get details of all sporting events around you!!</p>
-							<h2>Sports Events</h2>
-						</header>
-					</div> -->
-
-				</article>-->
+				
 				<article>
 					<img src="images/slide05.jpg"  alt="" />
 					<div class="inner">
@@ -200,32 +226,30 @@ while($r=mysqli_fetch_assoc($result))
 						<p>Try to be more active in college events</p>
 						<h2>Events Details</h2>
 					</header>
-                                                                        <div class="row">
-  <div class="column" style="background-color:#aaa;">
-    <h2>Running Events</h2>
-    <h2> <?php echo $running ;?> </h2>
+                    <div class="row">
+                         <div class="column" style="background-color:#aaa;">
+                              <h2>Running Events</h2>
+                              <h2> <?php echo $running ;?> </h2>
     
-  </div>
-  <div class="column" style="background-color:#bbb;">
-   
-    <h2>Future Events</h2>
-    <h2> <?php echo $future ;?> </h2>
-
-  </div>
-  <div class="column" style="background-color:#aaa;">
-    <h2>Past Events</h2>
-    <h2> <?php echo $past ;?></h2>
-  </div>
-  <div class="column" style="background-color:#bbb;">
-    <h2>You Registered in</h2>
-    <h2> <?php echo $registered ;?> </h2>
-  </div>
-</div>
+                         </div>
+                         <div class="column" style="background-color:#bbb;">
+                              <h2>Future Events</h2>
+                              <h2> <?php echo $future ;?> </h2>
+                         </div>
+                         <div class="column" style="background-color:#aaa;">
+                              <h2>Past Events</h2>
+                              <h2> <?php echo $past ;?></h2>
+                         </div>
+                         <div class="column" style="background-color:#bbb;">
+                              <h2>You Registered in</h2>
+                              <h2> <?php echo $registered ;?> </h2>
+                         </div>
+                     </div>
 				</div>
 			</section>
 
 				<header class="align-center">
-						<p class="special"><br><br><br>Connect with us to host your event with us. For More Details Click here.</p>
+						<p class="special"><br><br><br>Connect with us to host your event with us. For query mail us  at tusharjain.btech.cs19@iiitranchi.ac.in .</p>
 						<h2>EVENTS LIST</h2>
 					</header>
 					<!-- One -->
@@ -233,13 +257,9 @@ while($r=mysqli_fetch_assoc($result))
 				<div class="inner">
 					<div class="grid-style">
 <?php
-//connect database 
-
-//$name= $_SESSION['username'];
-//select all values from empInfo table
+//select all values from event table
 $sql = "select * from EVENTS 
-where END_DATE_TIME >= cast((now()) as date) AND REVIEW = 0
-;";
+where END_DATE_TIME >= cast((now()) as date) AND REVIEW = 0;";
 $result = mysqli_query($db,$sql);
 if($result)
 {
@@ -258,7 +278,7 @@ while($r=mysqli_fetch_assoc($result))
 								<div class="image fit">');
 								
 						    require_once "pdo.php";
-						    $loc = NULL;
+						    $loc = 'images/def.jpg';
 						$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
 					$stmt123 = $pdo -> prepare($sql123);
 					$stmt123 -> execute(array(':Data123' => $id));
@@ -294,14 +314,11 @@ else
 <!-- PAST EVENTS-->
 
 	<header class="align-center">
-						<p class="special"><br><br><br>Connect with us to host your event with us. For More Details Click here.</p>
+						<p class="special"><br><br><br>Connect with us to host your event with us. For query mail us  at tusharjain.btech.cs19@iiitranchi.ac.in .</p>
 						<h2>PAST EVENTS</h2>
 					</header>
 <?php
-//connect database 
-
-//$name= $_SESSION['username'];
-//select all values from empInfo table
+//select all values from events table
 $sql = "select * from EVENTS 
 where END_DATE_TIME <= cast((now()) as date) AND REVIEW = 0
 ;";
@@ -325,8 +342,18 @@ while($r=mysqli_fetch_assoc($result))
   $path="images/".$id.".jpeg";
   echo '<div>
 							<div class="box">
-								<div class="image fit">
-								<img src="'.$path.'"  style=" max-width:100%; max-height:350px;" />
+								<div class="image fit">';
+								 require_once "pdo.php";
+						    $loc = 'images/def.jpg';
+						$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
+					$stmt123 = $pdo -> prepare($sql123);
+					$stmt123 -> execute(array(':Data123' => $id));
+					$row123 = $stmt123->fetchAll(PDO::FETCH_ASSOC);
+					foreach($row123 as $re)
+					{$loc = $re['IMAGES'];
+					break;}
+								
+								echo '<img src="'.$loc.'"  style=" max-width:100%; max-height:350px;" />
 								</div>
 								<div class="content">
 									<header class="align-center">
@@ -365,7 +392,7 @@ else
 			<section id="three" class="wrapper style2">
 				<div class="inner">
 					<header class="align-center">
-						<p class="special">Connect with us to host your event with us.</p>
+						<p class="special">Connect with us to host your event with us. For query mail us  at tusharjain.btech.cs19@iiitranchi.ac.in .</p>
 						<h2>OUR PARTNERS</h2>
 					</header>
 					<div class="gallery">
@@ -428,3 +455,7 @@ else
 
 	</body>
 </html>
+<!--
+                                             Authors
+        Rishav Mazumdar ( 2019UGEC013R )                Tushar Jain ( 2019UGCS001R )
+-->   

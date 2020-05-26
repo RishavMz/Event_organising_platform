@@ -1,6 +1,12 @@
 <?php
-session_start();
+/*This file contains the admin dashboard page, which allows the admin to have an overview of the various events
+    organised by various organisations.
+  The various events(grouped by organisers) are shown with an option to perform certain actions on these events.
+  This page also shows the student details who have signed up.
+*/
 
+session_start();
+        //Handling the action command by button click
 require_once "pdo.php";
 if(isset($_GET['EVENT_ID']) && isset($_GET['ACTION']))
 {
@@ -71,7 +77,7 @@ if(isset($_GET['EVENT_ID']) && isset($_GET['ACTION']))
 		    echo("<div class = 'error success'>".$_SESSION['message']."</div>");
 		    unset($_SESSION['message']);
 		}
-        
+                //Shows the various organisers 
         $sql = "select * from ORGANISER";
         $stmt = $pdo -> prepare($sql);
         $stmt -> execute();
@@ -107,13 +113,15 @@ if(isset($_GET['EVENT_ID']) && isset($_GET['ACTION']))
 					<td>Registrations</td>
 					<td>Action</td>
 				</tr>
-                </thead><?php
+                </thead>
+                <?php
+                        //Groups the various events as per the organisers
                 $sql1 = "SELECT * FROM EVENTS WHERE ORGANISER_ID = :V1";
                 $stmt1 = $pdo -> prepare($sql1);
                 $stmt1 -> execute(array(':V1' => $rows['ORGANISER_ID'],));
                 $row1 = $stmt1->fetchAll(PDO::FETCH_ASSOC);
                 foreach( $row1 as $rows1)
-                {   
+                {           //Checking the review by admin(numeric data) and converting it into a corredponding string
                     if($rows1['REVIEW'] == 0)
                     {
                         $astatus = "Working";
@@ -134,10 +142,10 @@ if(isset($_GET['EVENT_ID']) && isset($_GET['ACTION']))
                     <td>'.$astatus.'</td>
                     <td>'.$rows1["REGISTRATIONS"].'</td>
                     <td><a href = "admin_ess.php?EVENT_ID='.$rows1['EVENT_ID'].'" class = "button special">More</a></td></td>
-                </tr>');
-                }
-			echo('<br><table></div></div>
-        </div>');
+                    </tr>');
+                    }
+			    echo('<br><table></div></div>
+                    </div>');
                 }
                 ?>
 	</div>
@@ -157,7 +165,9 @@ if(isset($_GET['EVENT_ID']) && isset($_GET['ACTION']))
                 <td><b>Graduation Year</b></td>
                 
             </tr>
-            </thead><?php
+            </thead>
+        <?php   
+                    //Showing a list of all the users signed up under this platform
         $sql = 'SELECT * FROM USERS;';
         $stmt1 = $pdo -> prepare($sql);
         $stmt1 -> execute(array());
@@ -181,3 +191,8 @@ if(isset($_GET['EVENT_ID']) && isset($_GET['ACTION']))
 			<script src="assets/js/main.js"></script>
 </body></html>
 
+
+<!-- 
+                                               Authors:
+         Rishav Mazumdar ( 2019UGEC013R )                Tushar Jain ( 2019UGCS001R )
+-->              

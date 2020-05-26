@@ -1,62 +1,82 @@
-<?php include('server.php') ?>
-<?php 
-  if (isset($_GET['USER_ID'])) {
+<?php
+/*  this page contains details of the user selected and events in which he/she has registered.
+    Note- events marked for review or deleted  will be hidden to users.
+*/  
+include('server.php');
+
+if (isset($_GET['USER_ID'])) {
   	$user_id=$_GET['USER_ID'];
   }
-?>
-<?php
-//connect database 
 
-
-//select all values from empInfo table
 $running=0;
 $future=0;
 $past=0;
 $registered=0;
+
+//to findout number of running events
+//only count those events which aren't marked/deleted.
 $sql = "select * from EVENTS 
-where END_DATE_TIME >= cast((now()) as date) and BEGIN_DATE_TIME <= cast((now()) as date) AND REVIEW = 0
-;";
+where END_DATE_TIME >= cast((now()) as date) and BEGIN_DATE_TIME <= cast((now()) as date) AND REVIEW = 0;";
 $result = mysqli_query($db,$sql);
 if($result)
 {
-while($r=mysqli_fetch_assoc($result))
-{ $running=$running+1;}
+    while($r=mysqli_fetch_assoc($result))
+    { 
+        $running=$running+1;
+        
+    }
 }
 	else
   	   echo("Error description: " . mysqli_error($db));
+  	   
+//to findout number of past events
+//only count those events which aren't marked/deleted.  	   
 $sql = "select * from EVENTS 
 where END_DATE_TIME < cast((now()) as date) AND REVIEW = 0
 ;";
 $result = mysqli_query($db,$sql);
 if($result)
 {
-while($r=mysqli_fetch_assoc($result))
-{ $past=$past+1;}
+    while($r=mysqli_fetch_assoc($result))
+    {
+        $past=$past+1;
+        
+    }
 }
 	else
   	   echo("Error description: " . mysqli_error($db));
+  	   
+//to findout number of future events
+//only count those events which aren't marked/deleted.  	   
 $sql = "select * from EVENTS 
-where BEGIN_DATE_TIME >= cast((now()) as date) AND REVIEW = 0
-;";
+where BEGIN_DATE_TIME >= cast((now()) as date) AND REVIEW = 0;";
 $result = mysqli_query($db,$sql);
 if($result)
 {
-while($r=mysqli_fetch_assoc($result))
-{ $future=$future+1;}
+     while($r=mysqli_fetch_assoc($result))
+     {
+         $future=$future+1;
+         
+     }
 }
 	else
   	   echo("Error description: " . mysqli_error($db));
+  	   
+//to findout number of events for which user registered
+//only count those events which aren't marked/deleted.  	   
  $sql = "SELECT * FROM USERS WHERE USER_ID = '$user_id';";
-  $result = mysqli_query($db, $sql);
-  $user = mysqli_fetch_assoc($result);
+ $result = mysqli_query($db, $sql);
+ $user = mysqli_fetch_assoc($result);
   
-  if ($user) { // if user exists
-$user_id=$user['USER_ID'];
-$fullname=$user['NAME'];
-$institute=$user['INSTITUTE'];
-$grad_year=$user['GRADUATION_YEAR'];
-$email=$user['EMAIL_ID'];
-$phone=$user['PHONE'];
+ if ($user) {
+   // if user exists
+   $name=$user['USERNAME'];
+   $user_id=$user['USER_ID'];
+   $fullname=$user['NAME'];
+   $institute=$user['INSTITUTE'];
+   $grad_year=$user['GRADUATION_YEAR'];
+   $email=$user['EMAIL_ID'];
+   $phone=$user['PHONE'];
   }
 else
   echo("Error description: " . mysqli_error($db));
@@ -66,11 +86,15 @@ where USER_ID = $user_id
 $result = mysqli_query($db,$sql);
 if($result)
 {
-while($r=mysqli_fetch_assoc($result))
-{ $registered=$registered+1;}
+    while($r=mysqli_fetch_assoc($result))
+    {
+        $registered=$registered+1;
+        
+    }
 } 
 	else
   	   echo("Error description: " . mysqli_error($db));
+  	   
 ?>
 <!DOCTYPE HTML>
 
@@ -156,16 +180,7 @@ while($r=mysqli_fetch_assoc($result))
 						</header>
 					</div>
 				</article>
-				<!--<article>
-					<img src="images/slide04.jpg"  alt="" />
-                    <div class="inner">
-						<header>
-							<p>Get details of all sporting events around you!!</p>
-							<h2>Sports Events</h2>
-						</header>
-					</div> -->
-
-				</article>-->
+			
 				<article>
 					<img src="images/slide05.jpg"  alt="" />
 					<div class="inner">
@@ -197,7 +212,7 @@ while($r=mysqli_fetch_assoc($result))
 			<section id="two" class="wrapper style3">
 				<div class="inner">
 					<header class="align-center">
-						<p>Try to be more active in college events</p>
+						<p></p>
 						<h2>DASHBOARD</h2>
 					</header>
 					
@@ -222,7 +237,7 @@ while($r=mysqli_fetch_assoc($result))
     <h2> <?php echo $past ;?></h2>
   </div>
   <div class="column" style="background-color:#bbb;">
-    <h2>You Registered in</h2>
+    <h2>Registered in</h2>
     <h2> <?php echo $registered ;?> </h2>
   </div>
 </div>
@@ -230,14 +245,14 @@ while($r=mysqli_fetch_assoc($result))
 			</section>
 
 				<header class="align-center">
-						<p class="special"><br><br><br>Connect with us to host your event with us. For More Details Click here.</p>
+						<p class="special"><br><br><br></p>
 						<h2>REGISTERED EVENTS</h2>
 					</header>
 <?php
-//connect database 
+
 $count=0;
 //$name= $_SESSION['username'];
-//select all values from empInfo table
+
 $sql = "select * from USER_DATA 
 where USER_ID='$user_id'
 ;";
@@ -271,7 +286,7 @@ while($r=mysqli_fetch_assoc($resul))
 								<div class="image fit">');
 								
 						    require_once "pdo.php";
-						    $loc = NULL;
+						    $loc = 'images/def.jpg';
 						$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
 					$stmt123 = $pdo -> prepare($sql123);
 					$stmt123 -> execute(array(':Data123' => $id));
@@ -345,3 +360,7 @@ echo '
 
 	</body>
 </html>
+<!--
+                                             Authors
+        Rishav Mazumdar ( 2019UGEC013R )                Tushar Jain ( 2019UGCS001R )
+-->   

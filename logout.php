@@ -1,4 +1,6 @@
 <?php 
+
+        //This is the logout file which terminates the session and enables redirection to a fresh login
   session_start(); 
 
   if (!isset($_SESSION['username'])) {
@@ -8,9 +10,9 @@
   if (isset($_GET['logout'])) {
   	session_destroy();
   	unset($_SESSION['username']);
-  	if(isset($_SESSION['Organiser_id'])){    //I changed here
-  	    unset($_SESSION['Organiser_id']);       //And here
-  	}                                           //And here       
+  	if(isset($_SESSION['Organiser_id'])){    
+  	    unset($_SESSION['Organiser_id']);       
+  	}                                                 
   	header("location: login.php");
   }
 ?>
@@ -145,3 +147,7 @@
 
 	</body>
 </html>
+<!--
+                                             Authors
+        Rishav Mazumdar ( 2019UGEC013R )                Tushar Jain ( 2019UGCS001R )
+-->   

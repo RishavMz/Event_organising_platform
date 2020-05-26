@@ -1,5 +1,7 @@
-<?php include('server.php') ?>
 <?php 
+/*  this page contains details of the events marked for review or deleted by admin.
+*/
+include('server.php'); 
   
 
   if (!isset($_SESSION['username'])) {
@@ -13,42 +15,56 @@
   }
 ?>
 <?php
-//connect database 
 
 $name= $_SESSION['username'];
-//select all values from empInfo table
+
 $total=0;
 $deleted=0;
 $rev=0;
+
+//count all events
 $sql = "select * from EVENTS 
 ;";
 $result = mysqli_query($db,$sql);
 if($result)
 {
-while($r=mysqli_fetch_assoc($result))
-{ $total=$total+1;}
+    while($r=mysqli_fetch_assoc($result))
+    {
+        $total=$total+1;
+        
+    }
 }
 	else
   	   echo("Error description: " . mysqli_error($db));
+  	   
+//to findout number of deleted events
 $sql = "select * from EVENTS 
 where REVIEW=2
 ;";
 $result = mysqli_query($db,$sql);
 if($result)
 {
-while($r=mysqli_fetch_assoc($result))
-{ $deleted=$deleted+1;}
+     while($r=mysqli_fetch_assoc($result))
+     { 
+         $deleted=$deleted+1;
+         
+     }
 }
 	else
   	   echo("Error description: " . mysqli_error($db));
+  	   
+//to findout number of marked events  	   
 $sql = "select * from EVENTS 
 where REVIEW=1
 ;";
 $result = mysqli_query($db,$sql);
 if($result)
 {
-while($r=mysqli_fetch_assoc($result))
-{ $rev=$rev+1;}
+      while($r=mysqli_fetch_assoc($result))
+      {
+          $rev=$rev+1;
+          
+      }
 }
 	else
   	   echo("Error description: " . mysqli_error($db));
@@ -58,7 +74,7 @@ while($r=mysqli_fetch_assoc($result))
 
 <html>
 	<head>
-		<title>Home Page</title>
+		<title>Marked/Deleted</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="assets/css/main.css" />
@@ -140,16 +156,7 @@ while($r=mysqli_fetch_assoc($result))
 						</header>
 					</div>
 				</article>
-				<!--<article>
-					<img src="images/slide04.jpg"  alt="" />
-                    <div class="inner">
-						<header>
-							<p>Get details of all sporting events around you!!</p>
-							<h2>Sports Events</h2>
-						</header>
-					</div> -->
-
-				</article>-->
+				
 				<article>
 					<img src="images/slide05.jpg"  alt="" />
 					<div class="inner">
@@ -196,10 +203,7 @@ while($r=mysqli_fetch_assoc($result))
 						<h2>DELETED EVENTS LIST</h2>
 					</header>
 <?php
-//connect database 
 
-//$name= $_SESSION['username'];
-//select all values from empInfo table
 $sql = "select * from EVENTS 
 where  REVIEW=2
 ;";
@@ -225,7 +229,7 @@ while($r=mysqli_fetch_assoc($result))
 								<div class="image fit">');
 								
 						    require_once "pdo.php";
-						    $loc = NULL;
+						    $loc = 'images/def.jpg';
 						$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
 					$stmt123 = $pdo -> prepare($sql123);
 					$stmt123 -> execute(array(':Data123' => $id));
@@ -266,10 +270,7 @@ else
 						<h2>MARKED FOR REVIEW</h2>
 					</header>
 <?php
-//connect database 
 
-//$name= $_SESSION['username'];
-//select all values from empInfo table
 $sql = "select * from EVENTS 
 where REVIEW = 1
 ;";
@@ -296,7 +297,7 @@ while($r=mysqli_fetch_assoc($result))
 								<div class="image fit">');
 								
 						    require_once "pdo.php";
-						    $loc = NULL;
+						    $loc = 'images/def.jpg';
 						$sql123 = "SELECT * FROM IMAGES  WHERE EVENT_ID = :Data123";
 					$stmt123 = $pdo -> prepare($sql123);
 					$stmt123 -> execute(array(':Data123' => $id));
@@ -399,3 +400,7 @@ else
 
 	</body>
 </html>
+<!--
+                                             Authors
+        Rishav Mazumdar ( 2019UGEC013R )                Tushar Jain ( 2019UGCS001R )
+-->  

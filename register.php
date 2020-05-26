@@ -1,4 +1,7 @@
-<?php include('server.php') ?>
+<?php
+//registration page
+include('server.php');
+?>
 <!DOCTYPE HTML>
 
 <html>
@@ -176,3 +179,7 @@ function myFunction() {
 
 	</body>
 </html>
+<!--
+                                             Authors
+        Rishav Mazumdar ( 2019UGEC013R )                Tushar Jain ( 2019UGCS001R )
+--> 
