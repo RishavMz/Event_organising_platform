@@ -10,7 +10,9 @@ This repo has been made for keeping tracks of changes and version control for ou
         Also, there exists admin access, where the admin can see all the events irganised by different organisers , and all participating
         and registered students. There also exists comment section for each indivisual event for queries and answers.
 
+  
   TEAM:
+  
       => Tushar Jain (tusharjain0022)
       => Rishav Mazumdar (RishavMz)
         
