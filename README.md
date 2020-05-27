@@ -7,8 +7,8 @@ This repo has been made for keeping tracks of changes and version control for ou
         and registration details. 
         Students can see all the events organised by various events (including ongoing events, past events and upcoming events) 
         and register in an event if they wish. The organiser can see the registrations for their events. 
-        Also, there exists admin access, where the admin can see all the events irganised by different organisers , and all participating
-        and registered students. There also exists comment section for each indivisual event for queries and answers.
+        Also, there exists admin access for overall management of the platform, where the admin can see all the events organised by different organisers , and all participating
+        and registered students. There also exists comment section for each individual event for queries and answers.
 
   
   TEAM:
