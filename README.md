@@ -1,5 +1,5 @@
 # Hackovid
-This repo has been made for keeping tracks of changes and version control for our web based application.
+A web based event organising portal where organisers can broadcast their event to the participants.
     
     Project Description:
         A platform where people organising events online can connect with the registered students.
