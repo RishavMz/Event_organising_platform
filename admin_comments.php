@@ -157,7 +157,7 @@ if(isset($_GET['ORGANISER_ID']))
 					</ul>
 				</div>
 				<div class="copyright">
-					&copy; TEAM INSOMNIAC. All rights reserved.
+					&copy; IIITRANCHI. All rights reserved.
 				</div>
 			</footer>
 
