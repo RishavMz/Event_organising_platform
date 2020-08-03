@@ -104,14 +104,6 @@ if(isset($_POST['ENAME']) && isset($_POST['SDATE']) && isset($_POST['STIME']) &&
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<link rel="stylesheet" type="text/css" href="style.css">
-			<style>
-	    table{font-size:1.6vw;}
-	    @media screen and (max-width: 600px) {
-           table {
-          font-size: 1.8vh;
-  }
-}
-	</style>
 	</head>
 	<body class = "subpage">
 		<header id="header" class="reveal" >
@@ -140,9 +132,9 @@ if(isset($_POST['ENAME']) && isset($_POST['SDATE']) && isset($_POST['STIME']) &&
 		}
 		?>
 		<br>
-		<div style = "margin-left:15px; margin-right:15px;">
+		<div style = "margin-left:50px; margin-right:50px;">
 		<div class = "table wrapper">
-		<table  width=90%>
+		<table>
 			<caption>
 				Past Events
 			</caption>
