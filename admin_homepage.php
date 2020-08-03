@@ -116,7 +116,7 @@ if($result)
 
 		<!-- Header -->
 			<header id="header" class="alt">
-				<div class="logo"><a href="#"> by Team Insomniac<span></span></div>
+				<div class="logo"><a href="http://iiitranchi.ac.in/"> by IIITRANCHI<span></span></a></div>
 				<a href="#menu">MENU</a>
 			</header>
 
@@ -251,7 +251,7 @@ while($r=mysqli_fetch_assoc($result))
 								</div>
 								<div class="content">
 									<header class="align-center">
-										<p>Random</p>
+										<p>IIIT Ranchi</p>
 										<h2>'.$event_name.'</h2>
 									</header>
 									<p>Start Date:'.$begin.'<br>End Date:'.$end.'<br>Prizes:'.$prizes.'</p>
@@ -319,7 +319,7 @@ while($r=mysqli_fetch_assoc($result))
 								</div>
 								<div class="content">
 									<header class="align-center">
-										<p>Random</p>
+										<p>IIIT Ranchi</p>
 										<h2>'.$event_name.'</h2>
 									</header>
 									<p>Start Date:'.$begin.'<br>End Date:'.$end.'<br>Prizes:'.$prizes.'</p>
@@ -365,27 +365,27 @@ else
 						</div>
 						<div>
 							<div class="image fit">
-								<a href="#"><img src="images/partner2.jpg" alt="" /></a>
+								<a href="https://www.facebook.com/unmukt.iiitr/"><img src="images/partner2.jpg" alt="" /></a>
 							</div>
 						</div>
 						<div>
 							<div class="image fit">
-								<a href="#"><img src="images/partner3.jpeg" alt="" /></a>
+								<a href="https://www.facebook.com/hG.iiitranchi/"><img src="images/partner3.jpeg" alt="" /></a>
 							</div>
 						</div>
 						<div>
 							<div class="image fit">
-								<a href="#"><img src="images/partner4.png" alt="" /></a>
+								<a href="https://www.facebook.com/VYANGIIITR/"><img src="images/partner4.png" alt="" /></a>
 							</div>
 						</div>
 						<div>
 							<div class="image fit">
-								<a href="#"><img src="images/partner5.jpeg" alt="" /></a>
+								<a href="http://iiitranchi.ac.in/"><img src="images/partner5.jpeg" alt="" /></a>
 							</div>
 						</div>
 						<div>
 							<div class="image fit">
-								<a href="#"><img src="images/partner6.jpeg" alt="" /></a>
+								<a href="https://www.instagram.com/sportscouncil.iiitr/"><img src="images/partner6.jpeg" alt="" /></a>
 							</div>
 						</div>
 					</div>
@@ -397,14 +397,14 @@ else
 			<footer id="footer">
 				<div class="container">
 					<ul class="icons">
-						<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
-						<li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
-						<li><a href="#" class="icon fa-instagram"><span class="label">Instagram</span></a></li>
-						<li><a href="#" class="icon fa-envelope-o"><span class="label">Email</span></a></li>
+						<li><a href="https://twitter.com/IIITRanchi" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+						<li><a href="https://www.facebook.com/IIITRanchiOfficial/" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
+						<li><a href="https://www.instagram.com/its_iiit_ranchi/" class="icon fa-instagram"><span class="label">Instagram</span></a></li>
+						<li><a href="http://iiitranchi.ac.in/" class="icon fa-envelope-o"><span class="label">Email</span></a></li>
 					</ul>
 				</div>
 				<div class="copyright">
-					&copy; TEAM INSOMNIAC. All rights reserved.
+					&copy; IIITRANCHI. All rights reserved.
 				</div>
 			</footer>
 
