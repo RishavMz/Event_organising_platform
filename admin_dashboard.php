@@ -50,7 +50,7 @@ if(isset($_GET['EVENT_ID']) && isset($_GET['ACTION']))
 	<body class = "subpage" >
 		<!-- Header -->
 			<header id="header">
-				<div class="logo"><a href="#">by Team Insomniac</a></div>
+				<div class="logo"><a href="http://iiitranchi.ac.in/">by IIITR</a></div>
 				<a href="#menu">Menu</a>
 			</header>
 
