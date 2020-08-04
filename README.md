@@ -1,4 +1,4 @@
-# Hackovid
+# Hackovid( entry for Inter IIIT Hackathon)
 This repo has been made for keeping tracks of changes and version control for our web based application.
     
     Project Description:
